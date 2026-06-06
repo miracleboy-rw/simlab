@@ -43,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .glass-input:focus { border-color: #4318FF; box-shadow: 0 0 0 4px rgba(67,24,255,0.1); background: white; }
         .btn-login { background: linear-gradient(135deg, #4318FF, #6E38F7); color: white; border-radius: 16px; padding: 0.875rem; font-weight: 700; font-size: 1rem; border: none; cursor: pointer; transition: all 0.3s; width: 100%; box-shadow: 0 4px 15px rgba(67,24,255,0.3); }
         .btn-login:hover { box-shadow: 0 8px 30px rgba(67,24,255,0.4); transform: translateY(-2px); }
-        .demo-badge { background: rgba(67,24,255,0.08); border-radius: 12px; padding: 0.4rem 0.75rem; font-size: 0.8rem; color: #4318FF; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -78,15 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </button>
         </form>
 
-        <hr class="divider my-6">
-        <div class="text-center">
-            <p class="text-xs text-muted font-semibold uppercase tracking-wider mb-3">Akun Demo</p>
-            <div class="flex flex-wrap justify-center gap-2">
-                <span class="demo-badge"><i class="fas fa-tools mr-1"></i> laboran / admin123</span>
-                <span class="demo-badge"><i class="fas fa-chalkboard-teacher mr-1"></i> dosen1 / admin123</span>
-                <span class="demo-badge"><i class="fas fa-user-graduate mr-1"></i> mahasiswa1 / admin123</span>
-            </div>
+        <div class="text-center mt-6">
+            <p class="text-xs text-muted">Belum punya akun? <a href="register.php" class="text-primary font-semibold hover:underline">Daftar Sekarang</a></p>
         </div>
+
     </div>
 </body>
 </html>

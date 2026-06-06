@@ -2,10 +2,10 @@
 // Setup SIFLAB-BM
 // Jalankan: http://localhost/simlab/setup.php
 
-$host = 'localhost';
-$dbname = 'simlab';
-$username = 'root';
-$password = '';
+$host = 'sql313.infinityfree.com';
+$dbname = 'if0_42116915_simlab';
+$username = 'if0_42116915';
+$password = 'DWikOywMWjq';
 
 echo "<!DOCTYPE html><html lang='id'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'>";
 echo "<title>Setup SIFLAB-BM</title>";
@@ -50,22 +50,26 @@ try {
     foreach (['laboran','dosen1','mahasiswa1','mahasiswa2'] as $u) { $st->execute([$hash, $u]); }
     echo "<div class='flex items-center gap-3 p-4 rounded-2xl bg-emerald-50 text-emerald-700 mb-3'><i class='fas fa-check-circle text-emerald-500'></i><span class='font-medium'>Password akun demo direset — semua password: <strong>admin123</strong></span></div>";
     $hash = password_hash('admin123', PASSWORD_DEFAULT);
-    $pdo->exec("INSERT INTO users (username, password, role, nama_lengkap, nim_nidn) VALUES
+    try { $pdo->exec("INSERT IGNORE INTO users (username, password, role, nama_lengkap, nim_nidn) VALUES
         ('laboran', '$hash', 'laboran', 'Dr. Andi Laboran', '197501012010011001'),
         ('dosen1', '$hash', 'dosen', 'Prof. Siti Dosen', '198002152005012002'),
         ('mahasiswa1', '$hash', 'mahasiswa', 'Ahmad Mahasiswa', '2101234567'),
         ('mahasiswa2', '$hash', 'mahasiswa', 'Budi Pratama', '2101234568')");
     echo "<div class='flex items-center gap-3 p-4 rounded-2xl bg-emerald-50 text-emerald-700 mb-3'><i class='fas fa-check-circle text-emerald-500'></i><span class='font-medium'>Akun demo dibuat — password: <strong>admin123</strong></span></div>";
+    } catch (PDOException $e) {
+    echo "<div class='flex items-center gap-3 p-4 rounded-2xl bg-amber-50 text-amber-700 mb-3'><i class='fas fa-info-circle'></i><span class='font-medium'>Akun demo sudah ada (skip).</span></div>";
+    }
 
-    $pdo->exec("DELETE FROM laboratorium");
+    try { $pdo->exec("DELETE FROM laboratorium");
     $pdo->exec("INSERT INTO laboratorium (kode_lab, nama_lab, lokasi, kapasitas, deskripsi, fasilitas) VALUES
         ('LAB-SJ','Laboratorium Rekayasa Sel dan Jaringan','Gedung Biomedis Lt.2',15,'Laboratorium kultur jaringan dan biomedis regeneratif','Mikroskop Inverted, Laminar Air Flow, Inkubator CO2'),
         ('LAB-BM','Laboratorium Biomaterial','Gedung Biomedis Lt.2',15,'Laboratorium pengembangan material biomedis','Spektrofotometer FTIR, Universal Testing Machine'),
         ('LAB-IN','Laboratorium Instrumentasi Biomedis','Gedung Biomedis Lt.1',20,'Laboratorium perancangan alat medis','Oscilloscope, Function Generator, EKG Trainer'),
         ('LAB-PC','Laboratorium Pencitraan Biomedis','Gedung Biomedis Lt.1',15,'Laboratorium pengolahan citra medis','Workstation, MATLAB, Software DICOM')");
     echo "<div class='flex items-center gap-3 p-4 rounded-2xl bg-emerald-50 text-emerald-700 mb-3'><i class='fas fa-check-circle text-emerald-500'></i><span class='font-medium'>Data 4 laboratorium berhasil diisi.</span></div>";
+    } catch (PDOException $e) { echo "<div class='flex items-center gap-3 p-4 rounded-2xl bg-amber-50 text-amber-700 mb-3'><i class='fas fa-info-circle'></i><span class='font-medium'>Data laboratorium (skip).</span></div>"; }
 
-    $pdo->exec("DELETE FROM alat");
+    try { $pdo->exec("DELETE FROM alat");
     $pdo->exec("INSERT INTO alat (kode_alat, nama_alat, merk, spesifikasi, lokasi_penyimpanan, stok_total, stok_tersedia) VALUES
         ('EKG-001', 'Elektrokardiograf (EKG) 3-Lead', 'GE Healthcare', '3-channel, 12-lead interpretation', 'Rak A-01', 3, 3),
         ('USG-001', 'Ultrasound Diagnostic Scanner', 'Siemens', 'Color Doppler, convex & linear probe', 'Rak A-02', 2, 2),
@@ -73,20 +77,24 @@ try {
         ('DEFIB-001', 'Defibrillator Training Unit', 'Philips', 'Biphasic, AED mode', 'Rak B-02', 2, 2),
         ('BPM-001', 'Blood Pressure Monitor Digital', 'Omron', 'Automatic, LCD display', 'Rak C-01', 10, 10),
         ('PULSE-001', 'Pulse Oximeter', 'Masimo', 'SpO2, pulse rate', 'Rak C-02', 8, 8)");
+    echo "<div class='flex items-center gap-3 p-4 rounded-2xl bg-emerald-50 text-emerald-700 mb-3'><i class='fas fa-check-circle text-emerald-500'></i><span class='font-medium'>Data alat berhasil diisi.</span></div>";
+    } catch (PDOException $e) { echo "<div class='flex items-center gap-3 p-4 rounded-2xl bg-amber-50 text-amber-700 mb-3'><i class='fas fa-info-circle'></i><span class='font-medium'>Data alat (skip).</span></div>"; }
 
-    $pdo->exec("DELETE FROM bahan_habis_pakai");
+    try { $pdo->exec("DELETE FROM bahan_habis_pakai");
     $pdo->exec("INSERT INTO bahan_habis_pakai (nama_bahan, satuan, stok, stok_minimum) VALUES
         ('Elektroda EKG','buah',100,20),('Gel EKG','tube',15,5),('Kertas ECG','roll',30,10),
         ('Alkohol Swab','pack',25,5),('Sarung Tangan Lateks','box',10,3),('Masker Medis','box',20,5),('Cairan Disinfektan','liter',8,2)");
+    echo "<div class='flex items-center gap-3 p-4 rounded-2xl bg-emerald-50 text-emerald-700 mb-3'><i class='fas fa-check-circle text-emerald-500'></i><span class='font-medium'>Data bahan habis pakai berhasil diisi.</span></div>";
+    } catch (PDOException $e) { echo "<div class='flex items-center gap-3 p-4 rounded-2xl bg-amber-50 text-amber-700 mb-3'><i class='fas fa-info-circle'></i><span class='font-medium'>Data bahan (skip).</span></div>"; }
 
-    $pdo->exec("DELETE FROM kalender_events");
+    try { $pdo->exec("DELETE FROM kalender_events");
     $pdo->exec("INSERT INTO kalender_events (judul, tgl_mulai, tgl_selesai, tipe, warna) VALUES
         ('Praktikum Fisiologi','2026-06-08','2026-06-08','Praktikum','#28a745'),
         ('Praktikum Instrumentasi Biomedis','2026-06-10','2026-06-10','Praktikum','#28a745'),
         ('Kalibrasi EKG','2026-06-15','2026-06-16','Kalibrasi','#dc3545'),
         ('Maintenance USG','2026-06-20','2026-06-21','Maintenance','#ffc107')");
-
     echo "<div class='flex items-center gap-3 p-4 rounded-2xl bg-emerald-50 text-emerald-700 mb-4'><i class='fas fa-check-circle text-emerald-500'></i><span class='font-medium'>Data sample berhasil diisi.</span></div>";
+    } catch (PDOException $e) { echo "<div class='flex items-center gap-3 p-4 rounded-2xl bg-amber-50 text-amber-700 mb-4'><i class='fas fa-info-circle'></i><span class='font-medium'>Data kalender (skip).</span></div>"; }
 
     $dirs = [__DIR__ . '/uploads/dokumen', __DIR__ . '/uploads/foto_alat', __DIR__ . '/uploads/ebook'];
     foreach ($dirs as $dir) { if (!is_dir($dir)) mkdir($dir, 0777, true); }
