@@ -27,6 +27,10 @@ function fetchOne($sql, $params = []) {
     return query($sql, $params)->fetch();
 }
 
+function fetchRow($sql, $params = []) {
+    return query($sql, $params)->fetch();
+}
+
 function insertGetId($sql, $params = []) {
     global $pdo;
     $stmt = $pdo->prepare($sql);

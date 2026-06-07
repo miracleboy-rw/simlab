@@ -1,112 +1,170 @@
-<?php
+﻿<?php
 session_start();
 require_once '../config/database.php';
 require_once '../config/functions.php';
 require_once '../includes/auth_check.php';
 if (!isRole('laboran')) { alert('danger', 'Akses ditolak!'); redirect('../index.php'); }
 $base_url = '../';
-$page_title = 'Dashboard Laboran';
-include '../includes/header.php';
+$page_title = 'Dashboard';
+$user = fetchRow("SELECT * FROM users WHERE id = ?", [$_SESSION['user_id']]);
 
 $total_alat = getCount('alat');
 $total_bahan = getCount('bahan_habis_pakai');
 $pending_count = getCount('peminjaman', "status = 'Pending'");
 $approved_count = getCount('peminjaman', "status = 'Approved'");
 $rusak_count = getCount('alat', "status = 'Rusak'");
-$bahan_alert = fetchAll("SELECT * FROM bahan_habis_pakai WHERE stok <= stok_minimum");
+$bahan_alert = fetchAll("SELECT * FROM bahan_habis_pakai WHERE stok <= stok_minimum ORDER BY (stok * 1.0 / stok_minimum) ASC LIMIT 5");
 
 $recent_peminjaman = fetchAll("SELECT p.*, u.nama_lengkap FROM peminjaman p
                                JOIN users u ON p.user_id = u.id
                                WHERE p.status = 'Pending'
                                ORDER BY p.created_at DESC LIMIT 5");
+include '../includes/header.php';
 ?>
-<div class="mb-6">
-    <h1 class="page-title"><i class="fas fa-tools mr-3"></i> Dashboard Laboran</h1>
-    <p class="page-subtitle">Panel manajemen laboratorium</p>
+<div class="grid-6">
+    <div class="card stat-card">
+        <div class="stat-card-top">
+            <span class="stat-card-title">Total Alat</span>
+            <span class="stat-card-icon" style="background:#DBEAFE;color:#2a4dd7">
+                <span class="material-symbols-outlined">inventory_2</span>
+            </span>
+        </div>
+        <p class="stat-card-number"><?= $total_alat ?></p>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-card-top">
+            <span class="stat-card-title">Total Bahan</span>
+            <span class="stat-card-icon" style="background:#EDE9FE;color:#9333EA">
+                <span class="material-symbols-outlined">science</span>
+            </span>
+        </div>
+        <p class="stat-card-number"><?= $total_bahan ?></p>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-card-top">
+            <span class="stat-card-title">Pending</span>
+            <span class="stat-card-icon" style="background:#FEF3C7;color:#F59E0B">
+                <span class="material-symbols-outlined">hourglass_empty</span>
+            </span>
+        </div>
+        <p class="stat-card-number" style="color:#F59E0B"><?= $pending_count ?></p>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-card-top">
+            <span class="stat-card-title">Approved</span>
+            <span class="stat-card-icon" style="background:#DCFCE7;color:#22C55E">
+                <span class="material-symbols-outlined">check_circle</span>
+            </span>
+        </div>
+        <p class="stat-card-number" style="color:#22C55E"><?= $approved_count ?></p>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-card-top">
+            <span class="stat-card-title">Alat Rusak</span>
+            <span class="stat-card-icon" style="background:#FEE2E2;color:#EF4444">
+                <span class="material-symbols-outlined">report</span>
+            </span>
+        </div>
+        <p class="stat-card-number" style="color:#EF4444"><?= $rusak_count ?></p>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-card-top">
+            <span class="stat-card-title">Alert Bahan</span>
+            <span class="stat-card-icon" style="background:#FEF3C7;color:#F59E0B">
+                <span class="material-symbols-outlined">warning</span>
+            </span>
+        </div>
+        <p class="stat-card-number" style="color:#F59E0B"><?= count($bahan_alert) ?></p>
+    </div>
 </div>
 
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-    <div class="stat-card text-center">
-        <div class="stat-value text-primary"><?= $total_alat ?></div>
-        <div class="stat-label">Total Alat</div>
-    </div>
-    <div class="stat-card text-center">
-        <div class="stat-value" style="color:#05CD99"><?= $total_bahan ?></div>
-        <div class="stat-label">Bahan Habis</div>
-    </div>
-    <div class="stat-card text-center">
-        <div class="stat-value" style="color:#B87A00"><?= $pending_count ?></div>
-        <div class="stat-label">Pending</div>
-    </div>
-    <div class="stat-card text-center">
-        <div class="stat-value" style="color:#6E38F7"><?= $approved_count ?></div>
-        <div class="stat-label">Disetujui</div>
-    </div>
-    <div class="stat-card text-center">
-        <div class="stat-value text-red-500"><?= $rusak_count ?></div>
-        <div class="stat-label">Alat Rusak</div>
-    </div>
-    <div class="stat-card text-center">
-        <div class="stat-value text-gray-600"><?= count($bahan_alert) ?></div>
-        <div class="stat-label">Alert Bahan</div>
-    </div>
-</div>
-
-<div class="grid grid-cols-1 lg:grid-cols-7 gap-6">
-    <div class="lg:col-span-4">
-        <div class="glass-card p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h5 class="font-bold text-navy"><i class="fas fa-hourglass-half mr-2"></i> Peminjaman Perlu Verifikasi</h5>
-                <a href="verifikasi_peminjaman.php" class="btn-glass btn-glass-warning btn-sm">Lihat Semua</a>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="glass-table">
-                    <thead><tr><th>Kode</th><th>Peminjam</th><th>Tanggal</th><th>Status</th><th>Aksi</th></tr></thead>
-                    <tbody>
-                        <?php if (empty($recent_peminjaman)): ?>
-                        <tr><td colspan="5" class="text-center text-muted py-3">Tidak ada peminjaman pending</td></tr>
-                        <?php else: ?>
-                        <?php foreach ($recent_peminjaman as $p): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($p['kode_peminjaman']) ?></td>
-                            <td><?= htmlspecialchars($p['nama_lengkap']) ?></td>
-                            <td><?= formatTanggalIndo($p['created_at']) ?></td>
-                            <td><?= statusBadge($p['status']) ?></td>
-                            <td><a href="verifikasi_peminjaman.php?id=<?= $p['id'] ?>" class="btn-glass btn-glass-primary btn-sm">Verifikasi</a></td>
-                        </tr>
-                        <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+<div class="grid-2" style="margin-top:24px">
+    <div class="card" style="grid-column:1 / -1">
+        <div style="padding:16px 20px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between">
+            <h3 style="font-size:16px;font-weight:600;margin:0">Peminjaman Perlu Verifikasi</h3>
+            <a href="verifikasi_peminjaman.php" style="font-size:11px;font-weight:600;color:#2a4dd7">Lihat Semua</a>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Peminjam</th>
+                        <th>Tanggal</th>
+                        <th>Status</th>
+                        <th style="text-align:right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($recent_peminjaman)): ?>
+                    <tr><td colspan="4" style="padding:32px;text-align:center;color:#6B7280">Tidak ada peminjaman pending</td></tr>
+                    <?php else: ?>
+                    <?php foreach ($recent_peminjaman as $p): ?>
+                    <tr>
+                        <td>
+                            <p style="font-weight:600;color:#111827"><?= htmlspecialchars($p['nama_lengkap']) ?></p>
+                            <p style="font-size:11px;color:#6B7280"><?= htmlspecialchars($p['keperluan'] ?? '-') ?></p>
+                        </td>
+                        <td style="color:#6B7280"><?= date('d M Y', strtotime($p['tanggal_pinjam'])) ?></td>
+                        <td>
+                            <span class="badge" style="background:rgba(245,158,11,0.1);color:#F59E0B"><?= $p['status'] ?></span>
+                        </td>
+                        <td style="text-align:right">
+                            <a href="verifikasi_peminjaman.php" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#2a4dd7">
+                                <span class="material-symbols-outlined" style="font-size:14px">visibility</span> Detail
+                            </a>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="lg:col-span-3">
-        <div class="glass-card p-6 border-2" style="border-color:rgba(255,91,117,0.3);">
-            <h5 class="font-bold text-red-500 mb-4"><i class="fas fa-exclamation-diamond mr-2"></i> Alert Stok Minimal</h5>
+    <div class="card">
+        <div style="padding:16px 20px;border-bottom:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between">
+            <h3 style="font-size:16px;font-weight:600;margin:0">Bahan Kritis</h3>
+            <a href="manajemen_bahan.php" style="font-size:11px;font-weight:600;color:#2a4dd7">Kelola</a>
+        </div>
+        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:12px">
             <?php if (empty($bahan_alert)): ?>
-            <p class="text-muted">Semua stok aman.</p>
+            <p style="color:#6B7280;text-align:center;padding:16px">Semua stok bahan aman</p>
             <?php else: ?>
-            <div class="overflow-x-auto">
-                <table class="glass-table">
-                    <thead><tr><th>Bahan</th><th>Stok</th><th>Minimal</th><th>Status</th></tr></thead>
-                    <tbody>
-                        <?php foreach ($bahan_alert as $b): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($b['nama_bahan']) ?></td>
-                            <td><?= (int)$b['stok'] ?> <?= htmlspecialchars($b['satuan']) ?></td>
-                            <td><?= (int)$b['stok_minimum'] ?> <?= htmlspecialchars($b['satuan']) ?></td>
-                            <td><span class="glass-badge badge-danger">Kritis</span></td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+            <?php foreach ($bahan_alert as $b): ?>
+            <div class="card" style="padding:12px;display:flex;align-items:center;justify-content:space-between;background:rgba(239,68,68,0.03);border-color:rgba(239,68,68,0.15)">
+                <div>
+                    <p style="font-size:13px;font-weight:600;color:#111827"><?= htmlspecialchars($b['nama_bahan']) ?></p>
+                    <p style="font-size:11px;color:#6B7280">Stok: <?= $b['stok'] ?> / <?= $b['stok_minimum'] ?></p>
+                </div>
+                <span class="badge" style="background:rgba(239,68,68,0.1);color:#EF4444">Kritis</span>
             </div>
+            <?php endforeach; ?>
             <?php endif; ?>
-            <div class="mt-4">
-                <a href="manajemen_bahan.php" class="btn-glass btn-glass-danger btn-sm w-full text-center">Kelola Stok Bahan</a>
-            </div>
         </div>
     </div>
 </div>
+
+<div class="card" style="margin-top:24px">
+    <div style="padding:16px 20px;border-bottom:1px solid #E5E7EB">
+        <h3 style="font-size:16px;font-weight:600;margin:0">Aksi Cepat</h3>
+    </div>
+    <div class="card-body grid-4">
+        <a href="verifikasi_peminjaman.php" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border-radius:12px;background:#DBEAFE;color:#2a4dd7;font-size:11px;font-weight:600;text-align:center;transition:background 0.15s">
+            <span class="material-symbols-outlined" style="font-size:24px">fact_check</span>
+            Verifikasi Pinjam
+        </a>
+        <a href="verifikasi_peminjaman_lab.php" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border-radius:12px;background:#EDE9FE;color:#9333EA;font-size:11px;font-weight:600;text-align:center;transition:background 0.15s">
+            <span class="material-symbols-outlined" style="font-size:24px">meeting_room</span>
+            Verifikasi Lab
+        </a>
+        <a href="manajemen_inventaris.php" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border-radius:12px;background:#DCFCE7;color:#22C55E;font-size:11px;font-weight:600;text-align:center;transition:background 0.15s">
+            <span class="material-symbols-outlined" style="font-size:24px">inventory_2</span>
+            Kelola Alat
+        </a>
+        <a href="manajemen_bahan.php" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;border-radius:12px;background:#FEF3C7;color:#F59E0B;font-size:11px;font-weight:600;text-align:center;transition:background 0.15s">
+            <span class="material-symbols-outlined" style="font-size:24px">science</span>
+            Kelola Bahan
+        </a>
+    </div>
+</div>
+
 <?php include '../includes/footer.php'; ?>

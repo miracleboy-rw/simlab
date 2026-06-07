@@ -7,7 +7,6 @@ if (!isRole('laboran')) { alert('danger', 'Akses ditolak!'); redirect('../index.
 $base_url = '../';
 $page_title = 'Verifikasi Peminjaman';
 $laboran_id = $_SESSION['user_id'];
-include '../includes/header.php';
 
 if (isset($_GET['action'], $_GET['id'])) {
     $action = $_GET['action'];
@@ -55,6 +54,8 @@ if (isset($_GET['action'], $_GET['id'])) {
     redirect('verifikasi_peminjaman.php');
 }
 
+include '../includes/header.php';
+
 $filter_status = $_GET['status'] ?? '';
 $sql = "SELECT p.*, u.nama_lengkap, u.nim_nidn, GROUP_CONCAT(a.nama_alat SEPARATOR ', ') as alat_dipinjam
         FROM peminjaman p
@@ -82,60 +83,60 @@ if ($detail_id) {
 }
 ?>
 <div class="mb-6">
-    <h1 class="page-title"><i class="fas fa-check-double mr-3"></i> Verifikasi & Approval Peminjaman</h1>
+    <h1 class="page-title"><span class="material-symbols-outlined mr-3">done_all</span> Verifikasi & Approval Peminjaman</h1>
     <p class="page-subtitle">Tinjau, setujui, atau tolak pengajuan peminjaman</p>
 </div>
 
 <?php if ($detail && $detail['status'] == 'Pending'): ?>
-<div class="glass-card p-6 mb-6 border-2" style="border-color:rgba(255,184,0,0.3);">
-    <h5 class="font-bold text-yellow-700 mb-4"><i class="fas fa-pen mr-2"></i> Verifikasi Peminjaman: <?= htmlspecialchars($detail['kode_peminjaman']) ?></h5>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="card p-5 mb-6 border-2" style="border-color:rgba(255,184,0,0.3);">
+    <h5 style="font-weight:700; color:#A16207; margin-bottom:16px"><span class="material-symbols-outlined mr-2">edit</span> Verifikasi Peminjaman: <?= htmlspecialchars($detail['kode_peminjaman']) ?></h5>
+    <div class="grid-2" style="gap:24px">
         <div>
             <table class="w-full text-sm">
-                <tr><td class="font-semibold text-navy py-1 pr-4">Peminjam</td><td>: <?= htmlspecialchars($detail['nama_lengkap']) ?> (<?= htmlspecialchars($detail['nim_nidn']) ?>)</td></tr>
-                <tr><td class="font-semibold text-navy py-1 pr-4">Kode</td><td>: <?= htmlspecialchars($detail['kode_peminjaman']) ?></td></tr>
-                <tr><td class="font-semibold text-navy py-1 pr-4">Tanggal Pinjam</td><td>: <?= formatTanggalIndo($detail['tgl_pinjam']) ?></td></tr>
-                <tr><td class="font-semibold text-navy py-1 pr-4">Tanggal Kembali</td><td>: <?= formatTanggalIndo($detail['tgl_kembali']) ?></td></tr>
-                <tr><td class="font-semibold text-navy py-1 pr-4">Tujuan</td><td>: <?= htmlspecialchars($detail['tujuan']) ?></td></tr>
+                <tr><td style="font-weight:600; color:#111827" class="py-1 pr-4">Peminjam</td><td>: <?= htmlspecialchars($detail['nama_lengkap']) ?> (<?= htmlspecialchars($detail['nim_nidn']) ?>)</td></tr>
+                <tr><td style="font-weight:600; color:#111827" class="py-1 pr-4">Kode</td><td>: <?= htmlspecialchars($detail['kode_peminjaman']) ?></td></tr>
+                <tr><td style="font-weight:600; color:#111827" class="py-1 pr-4">Tanggal Pinjam</td><td>: <?= formatTanggalIndo($detail['tgl_pinjam']) ?></td></tr>
+                <tr><td style="font-weight:600; color:#111827" class="py-1 pr-4">Tanggal Kembali</td><td>: <?= formatTanggalIndo($detail['tgl_kembali']) ?></td></tr>
+                <tr><td style="font-weight:600; color:#111827" class="py-1 pr-4">Tujuan</td><td>: <?= htmlspecialchars($detail['tujuan']) ?></td></tr>
             </table>
         </div>
         <div>
-            <h6 class="font-bold text-navy mb-2">Alat yang dipinjam:</h6>
+            <h6 style="font-weight:700; color:#111827" class="mb-2">Alat yang dipinjam:</h6>
             <ul class="list-disc list-inside text-sm space-y-1 mb-3">
                 <?php foreach ($detail_items as $di): ?>
                 <li><?= htmlspecialchars($di['nama_alat']) ?> (<?= htmlspecialchars($di['kode_alat']) ?>) - <?= (int)$di['jumlah'] ?> unit</li>
                 <?php endforeach; ?>
             </ul>
             <?php if (!empty($detail_dokumen)): ?>
-            <h6 class="font-bold text-navy mb-2">Dokumen Pendukung:</h6>
+            <h6 style="font-weight:700; color:#111827" class="mb-2">Dokumen Pendukung:</h6>
             <div class="flex flex-wrap gap-2">
                 <?php foreach ($detail_dokumen as $dd): ?>
-                <a href="../uploads/dokumen/<?= $dd['file_path'] ?>" class="btn-glass btn-glass-outline btn-sm" target="_blank">
-                    <i class="fas fa-file-pdf mr-1"></i> <?= htmlspecialchars($dd['nama_file']) ?>
+                <a href="../uploads/dokumen/<?= $dd['file_path'] ?>" class="btn btn-outline btn-sm" target="_blank">
+                    <span class="material-symbols-outlined mr-1">picture_as_pdf</span> <?= htmlspecialchars($dd['nama_file']) ?>
                 </a>
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>
         </div>
     </div>
-    <hr class="divider my-4">
+    <hr style="border:none;border-top:1px solid #E5E7EB;margin:16px 0">
     <div class="flex flex-wrap gap-3">
-        <a href="?action=approve&id=<?= $detail['id'] ?>" class="btn-glass btn-glass-success" onclick="return confirm('Setujui peminjaman ini?')">
-            <i class="fas fa-check mr-2"></i> Approve
+        <a href="?action=approve&id=<?= $detail['id'] ?>" class="btn btn-success btn-md3" onclick="return confirm('Setujui peminjaman ini?')">
+            <span class="material-symbols-outlined mr-2">check</span> Approve
         </a>
         <form method="POST" action="?action=reject&id=<?= $detail['id'] ?>" class="flex flex-wrap gap-2" onsubmit="return confirm('Tolak peminjaman ini?')">
-            <input type="text" name="alasan_penolakan" class="glass-input" placeholder="Alasan penolakan..." required style="min-width:250px">
-            <button type="submit" class="btn-glass btn-glass-danger"><i class="fas fa-times mr-2"></i> Reject</button>
+            <input type="text" name="alasan_penolakan" class="form-input" placeholder="Alasan penolakan..." required>
+            <button type="submit" class="btn btn-danger btn-md3"><span class="material-symbols-outlined mr-2">close</span> Reject</button>
         </form>
     </div>
 </div>
 <?php endif; ?>
 
-<div class="glass-card p-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-        <h5 class="font-bold text-navy"><i class="fas fa-list mr-2"></i> Semua Peminjaman</h5>
-        <form method="GET" class="sm:w-48">
-            <select name="status" class="glass-input" onchange="this.form.submit()">
+<div class="card p-5">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px">
+        <h5 style="font-weight:700; color:#111827"><span class="material-symbols-outlined mr-2">list</span> Semua Peminjaman</h5>
+        <form method="GET">
+            <select name="status" class="form-input" onchange="this.form.submit()">
                 <option value="">Semua Status</option>
                 <option value="Pending" <?= $filter_status == 'Pending' ? 'selected' : '' ?>>Pending</option>
                 <option value="Approved" <?= $filter_status == 'Approved' ? 'selected' : '' ?>>Approved</option>
@@ -145,8 +146,8 @@ if ($detail_id) {
             </select>
         </form>
     </div>
-    <div class="overflow-x-auto">
-        <table class="glass-table">
+    <div class="table-wrapper">
+        <table class="table">
             <thead><tr>
                 <th>Kode</th><th>Peminjam</th><th>Alat</th><th>Tgl Pinjam</th><th>Tgl Kembali</th><th>Status</th><th>Aksi</th>
             </tr></thead>
@@ -158,18 +159,18 @@ if ($detail_id) {
                 <tr>
                     <td><?= htmlspecialchars($p['kode_peminjaman']) ?></td>
                     <td><?= htmlspecialchars($p['nama_lengkap']) ?></td>
-                    <td class="max-w-[150px] truncate"><?= htmlspecialchars($p['alat_dipinjam']) ?></td>
+                    <td class="max-w-[150px]"><?= htmlspecialchars($p['alat_dipinjam']) ?></td>
                     <td><?= formatTanggalIndo($p['tgl_pinjam']) ?></td>
                     <td><?= formatTanggalIndo($p['tgl_kembali']) ?></td>
                     <td><?= statusBadge($p['status']) ?></td>
                     <td>
                         <div class="flex gap-1">
-                            <a href="?id=<?= $p['id'] ?>" class="btn-glass btn-glass-outline btn-sm"><i class="fas fa-eye"></i></a>
+                            <a href="?id=<?= $p['id'] ?>" class="btn btn-outline btn-sm btn-md3"><span class="material-symbols-outlined">visibility</span></a>
                             <?php if ($p['status'] == 'Pending'): ?>
-                            <a href="?action=approve&id=<?= $p['id'] ?>" class="btn-glass btn-glass-success btn-sm" onclick="return confirm('Setujui?')"><i class="fas fa-check"></i></a>
+                            <a href="?action=approve&id=<?= $p['id'] ?>" class="btn btn-success btn-sm btn-md3" onclick="return confirm('Setujui?')"><span class="material-symbols-outlined">check</span></a>
                             <?php elseif ($p['status'] == 'Approved'): ?>
-                            <a href="?action=return&id=<?= $p['id'] ?>" class="btn-glass btn-glass-primary btn-sm" onclick="return confirm('Konfirmasi pengembalian?')"><i class="fas fa-undo"></i></a>
-                            <a href="?action=overdue&id=<?= $p['id'] ?>" class="btn-glass btn-glass-warning btn-sm" onclick="return confirm('Tandai terlambat?')"><i class="fas fa-exclamation-triangle"></i></a>
+                            <a href="?action=return&id=<?= $p['id'] ?>" class="btn btn-primary btn-sm btn-md3" onclick="return confirm('Konfirmasi pengembalian?')"><span class="material-symbols-outlined">undo</span></a>
+                            <a href="?action=overdue&id=<?= $p['id'] ?>" class="btn btn-warning btn-sm btn-md3" onclick="return confirm('Tandai terlambat?')"><span class="material-symbols-outlined">warning</span></a>
                             <?php endif; ?>
                         </div>
                     </td>

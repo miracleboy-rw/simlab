@@ -7,7 +7,6 @@ if (!isRole('laboran')) { alert('danger', 'Akses ditolak!'); redirect('../index.
 $base_url = '../';
 $page_title = 'Logbook Tindakan Kerusakan';
 $laboran_id = $_SESSION['user_id'];
-include '../includes/header.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] == 'tindak') {
@@ -32,6 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     redirect('logbook_kerusakan.php');
 }
 
+include '../includes/header.php';
+
 $laporan_list = fetchAll("SELECT l.*, a.nama_alat, a.kode_alat, u.nama_lengkap as pelapor
                           FROM laporan_kerusakan l
                           JOIN alat a ON l.alat_id = a.id
@@ -47,16 +48,16 @@ $logbook_list = fetchAll("SELECT lb.*, l.kronologi, l.gejala_kerusakan, a.nama_a
                           ORDER BY lb.created_at DESC LIMIT 20");
 ?>
 <div class="mb-6">
-    <h1 class="page-title"><i class="fas fa-book mr-3"></i> Logbook Tindakan Kerusakan</h1>
+    <h1 class="page-title"><span class="material-symbols-outlined mr-3">auto_stories</span> Logbook Tindakan Kerusakan</h1>
     <p class="page-subtitle">Catat tindakan perbaikan alat laboratorium</p>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-7 gap-6">
-    <div class="lg:col-span-4">
-        <div class="glass-card p-6">
-            <h5 class="font-bold text-navy mb-4"><i class="fas fa-exclamation-triangle mr-2"></i> Laporan Kerusakan Masuk</h5>
-            <div class="overflow-x-auto">
-                <table class="glass-table">
+<div class="grid-7" style="gap:24px">
+    <div style="grid-column:span 4">
+        <div class="card p-5">
+            <h5 style="font-weight:700; color:#111827" class="mb-4"><span class="material-symbols-outlined mr-2">warning</span> Laporan Kerusakan Masuk</h5>
+            <div class="table-wrapper">
+                <table class="table">
                     <thead><tr>
                         <th>Alat</th><th>Pelapor</th><th>Gejala</th><th>Tanggal</th><th>Status</th><th>Aksi</th>
                     </tr></thead>
@@ -68,12 +69,12 @@ $logbook_list = fetchAll("SELECT lb.*, l.kronologi, l.gejala_kerusakan, a.nama_a
                         <tr>
                             <td><?= htmlspecialchars($l['nama_alat']) ?> <small>(<?= htmlspecialchars($l['kode_alat']) ?>)</small></td>
                             <td><?= htmlspecialchars($l['pelapor']) ?></td>
-                            <td class="max-w-[150px] truncate"><?= htmlspecialchars($l['gejala_kerusakan']) ?></td>
+                            <td class="max-w-[150px]"><?= htmlspecialchars($l['gejala_kerusakan']) ?></td>
                             <td><?= formatTanggalIndo($l['tgl_kejadian']) ?></td>
                             <td><?= statusBadge($l['status']) ?></td>
                             <td>
-                                <button class="btn-glass btn-glass-primary btn-sm" onclick="document.getElementById('tindakModal<?= $l['id'] ?>').classList.remove('hidden')">
-                                    <i class="fas fa-tools mr-1"></i> Tindak
+                                <button class="btn btn-primary btn-sm btn-md3" onclick="document.getElementById('tindakModal<?= $l['id'] ?>').classList.remove('hidden')">
+                                    <span class="material-symbols-outlined mr-1">build</span> Tindak
                                 </button>
                             </td>
                         </tr>
@@ -83,9 +84,9 @@ $logbook_list = fetchAll("SELECT lb.*, l.kronologi, l.gejala_kerusakan, a.nama_a
             </div>
         </div>
     </div>
-    <div class="lg:col-span-3">
-        <div class="glass-card p-6">
-            <h5 class="font-bold text-navy mb-4"><i class="fas fa-clock mr-2"></i> Logbook Tindakan Terbaru</h5>
+    <div style="grid-column:span 3">
+        <div class="card p-5">
+            <h5 style="font-weight:700; color:#111827" class="mb-4"><span class="material-symbols-outlined mr-2">schedule</span> Logbook Tindakan Terbaru</h5>
             <?php if (empty($logbook_list)): ?>
             <p class="text-muted">Belum ada tindakan tercatat.</p>
             <?php else: ?>
@@ -93,7 +94,7 @@ $logbook_list = fetchAll("SELECT lb.*, l.kronologi, l.gejala_kerusakan, a.nama_a
                 <?php foreach ($logbook_list as $lb): ?>
                 <div class="pb-3 border-b border-gray-100">
                     <div class="flex justify-between items-start">
-                        <strong class="text-navy text-sm"><?= htmlspecialchars($lb['nama_alat']) ?></strong>
+                        <strong style="color:#111827" class="text-sm"><?= htmlspecialchars($lb['nama_alat']) ?></strong>
                         <small class="text-muted text-xs"><?= formatTanggalIndo($lb['created_at']) ?></small>
                     </div>
                     <p class="text-sm text-gray-600 my-1"><?= htmlspecialchars($lb['tindakan']) ?></p>
@@ -111,25 +112,25 @@ $logbook_list = fetchAll("SELECT lb.*, l.kronologi, l.gejala_kerusakan, a.nama_a
 
 <?php foreach ($laporan_list as $l): ?>
 <div id="tindakModal<?= $l['id'] ?>" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="glass-modal-content w-full max-w-lg mx-4">
+    <div class="card w-full max-w-lg mx-4 p-5">
         <form method="POST">
             <input type="hidden" name="action" value="tindak">
             <input type="hidden" name="laporan_id" value="<?= $l['id'] ?>">
-            <div class="modal-header flex justify-between items-center">
-                <h5 class="font-bold text-lg"><i class="fas fa-tools mr-2"></i>Tindakan: <?= htmlspecialchars($l['nama_alat']) ?></h5>
-                <button type="button" class="text-gray-400 hover:text-navy text-xl" onclick="document.getElementById('tindakModal<?= $l['id'] ?>').classList.add('hidden')">&times;</button>
+            <div class="card-header flex justify-between items-center">
+                <h5 style="font-weight:700" class="text-lg"><span class="material-symbols-outlined mr-2">build</span>Tindakan: <?= htmlspecialchars($l['nama_alat']) ?></h5>
+                <button type="button" style="color:#9CA3AF; font-size:1.5rem; background:none; border:none; cursor:pointer" onclick="document.getElementById('tindakModal<?= $l['id'] ?>').classList.add('hidden')">&times;</button>
             </div>
-            <div class="modal-body">
+            <div class="card-body">
                 <p class="mb-2"><strong>Kronologi:</strong> <?= htmlspecialchars($l['kronologi']) ?></p>
                 <p class="mb-4"><strong>Gejala:</strong> <?= htmlspecialchars($l['gejala_kerusakan']) ?></p>
-                <hr class="divider mb-4">
+                <hr style="border:none;border-top:1px solid #E5E7EB;margin:16px 0" class="mb-4">
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-navy mb-1">Tindakan yang dilakukan</label>
-                    <textarea name="tindakan" class="glass-input" rows="3" required></textarea>
+                    <label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Tindakan yang dilakukan</label>
+                    <textarea name="tindakan" class="form-input" rows="3" required></textarea>
                 </div>
                 <div class="mb-4">
-                    <label class="block text-sm font-semibold text-navy mb-1">Status Operasional Alat</label>
-                    <select name="status_operasional" class="glass-input" required>
+                    <label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Status Operasional Alat</label>
+                    <select name="status_operasional" class="form-input" required>
                         <option value="Rusak Ringan">Rusak Ringan</option>
                         <option value="Rusak Berat">Rusak Berat</option>
                         <option value="Servis">Servis</option>
@@ -137,9 +138,9 @@ $logbook_list = fetchAll("SELECT lb.*, l.kronologi, l.gejala_kerusakan, a.nama_a
                     </select>
                 </div>
             </div>
-            <div class="modal-footer flex justify-end gap-2">
-                <button type="button" class="btn-glass btn-glass-outline" onclick="document.getElementById('tindakModal<?= $l['id'] ?>').classList.add('hidden')">Batal</button>
-                <button type="submit" class="btn-glass btn-glass-primary"><i class="fas fa-save mr-2"></i> Catat Tindakan</button>
+            <div class="card-footer flex justify-end gap-2">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('tindakModal<?= $l['id'] ?>').classList.add('hidden')">Batal</button>
+                <button type="submit" class="btn btn-primary btn-md3"><span class="material-symbols-outlined mr-2">save</span> Catat Tindakan</button>
             </div>
         </form>
     </div>

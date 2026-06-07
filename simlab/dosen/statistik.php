@@ -31,40 +31,40 @@ $total_mahasiswa_aktif = getCount('peminjaman', "status IN ('Approved','Returned
 $total_alat_digunakan = count($stat_alat);
 ?>
 <div class="mb-6">
-    <h1 class="page-title"><i class="fas fa-chart-bar mr-3"></i> Statistik Penggunaan Laboratorium</h1>
-    <p class="page-subtitle">Visualisasi data penggunaan laboratorium</p>
+    <h1 class="page-title"><span class="material-symbols-outlined" style="margin-right:12px">bar_chart</span> Statistik Penggunaan Laboratorium</h1>
+    <p class="text-muted" style="margin-top:4px;font-size:13px">Visualisasi data penggunaan laboratorium</p>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-    <div class="stat-card text-center">
-        <div class="stat-value text-primary"><?= $total_peminjaman ?></div>
-        <div class="stat-label">Total Peminjaman</div>
+<div class="grid-3 mb-6">
+    <div class="card p-5 text-center">
+        <div style="font-size:28px;font-weight:700;color:#2a4dd7"><?= $total_peminjaman ?></div>
+        <div class="stat-card-label">Total Peminjaman</div>
     </div>
-    <div class="stat-card text-center">
-        <div class="stat-value" style="color:#05CD99"><?= count(fetchAll("SELECT DISTINCT user_id FROM peminjaman WHERE status IN ('Approved','Returned')")) ?></div>
-        <div class="stat-label">Mahasiswa Aktif</div>
+    <div class="card p-5 text-center">
+        <div style="font-size:28px;font-weight:700;color:#05CD99"><?= count(fetchAll("SELECT DISTINCT user_id FROM peminjaman WHERE status IN ('Approved','Returned')")) ?></div>
+        <div class="stat-card-label">Mahasiswa Aktif</div>
     </div>
-    <div class="stat-card text-center">
-        <div class="stat-value" style="color:#6E38F7"><?= $total_alat_digunakan ?></div>
-        <div class="stat-label">Total Alat</div>
+    <div class="card p-5 text-center">
+        <div style="font-size:28px;font-weight:700;color:#6E38F7"><?= $total_alat_digunakan ?></div>
+        <div class="stat-card-label">Total Alat</div>
     </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-8 gap-6 mb-6">
-    <div class="lg:col-span-5">
-        <div class="glass-card p-6">
-            <h5 class="font-bold text-navy mb-4"><i class="fas fa-chart-line mr-2"></i> Tren Peminjaman per Bulan</h5>
+<div style="display:flex;gap:24px;margin-bottom:24px;flex-wrap:wrap">
+    <div class="flex-1" style="min-width:280px">
+        <div class="card p-5">
+            <div class="section-header"><span class="material-symbols-outlined" style="margin-right:8px">show_chart</span> Tren Peminjaman per Bulan</div>
             <canvas id="trenChart" height="250"></canvas>
         </div>
     </div>
-    <div class="lg:col-span-3">
-        <div class="glass-card p-6">
-            <h5 class="font-bold text-navy mb-4"><i class="fas fa-trophy mr-2"></i> 5 Alat Terpopuler</h5>
-            <ol class="space-y-3">
+    <div class="flex-1" style="min-width:240px">
+        <div class="card p-5">
+            <div class="section-header"><span class="material-symbols-outlined" style="margin-right:8px">trophy</span> 5 Alat Terpopuler</div>
+            <ol style="display:flex;flex-direction:column;gap:12px">
                 <?php foreach (array_slice($stat_alat, 0, 5) as $i => $a): ?>
-                <li class="flex items-center justify-between pb-2 border-b border-gray-100">
-                    <span class="text-navy"><?= $i+1 ?>. <?= htmlspecialchars($a['nama_alat']) ?></span>
-                    <span class="glass-badge badge-primary"><?= (int)$a['dipinjam'] ?>x</span>
+                <li style="display:flex;align-items:center;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid #E5E7EB">
+                    <span><?= $i+1 ?>. <?= htmlspecialchars($a['nama_alat']) ?></span>
+                    <span class="badge" style="background:#DBEAFE;color:#2a4dd7"><?= (int)$a['dipinjam'] ?>x</span>
                 </li>
                 <?php endforeach; ?>
             </ol>
@@ -72,26 +72,26 @@ $total_alat_digunakan = count($stat_alat);
     </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="glass-card p-6">
-        <h5 class="font-bold text-navy mb-4"><i class="fas fa-users mr-2"></i> Mahasiswa Aktif</h5>
-        <div class="overflow-x-auto">
-            <table class="glass-table">
+<div class="grid-2">
+    <div class="card p-5">
+        <div class="section-header"><span class="material-symbols-outlined" style="margin-right:8px">group</span> Mahasiswa Aktif</div>
+        <div class="table-wrapper">
+            <table>
                 <thead><tr><th>Nama</th><th>NIM</th><th>Total Pinjam</th></tr></thead>
                 <tbody>
                     <?php foreach ($stat_mahasiswa as $m): ?>
                     <tr>
                         <td><?= htmlspecialchars($m['nama_lengkap']) ?></td>
-                        <td><?= htmlspecialchars($m['nim_nidn'] ?: '-') ?></td>
-                        <td><span class="glass-badge badge-primary"><?= (int)$m['total_pinjam'] ?></span></td>
+                        <td class="text-muted"><?= htmlspecialchars($m['nim_nidn'] ?: '-') ?></td>
+                        <td><span class="badge" style="background:#DBEAFE;color:#2a4dd7"><?= (int)$m['total_pinjam'] ?></span></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="glass-card p-6">
-        <h5 class="font-bold text-navy mb-4"><i class="fas fa-box mr-2"></i> Status Alat Saat Ini</h5>
+    <div class="card p-5">
+        <div class="section-header"><span class="material-symbols-outlined" style="margin-right:8px">inventory_2</span> Status Alat Saat Ini</div>
         <canvas id="statusChart" height="200"></canvas>
     </div>
 </div>

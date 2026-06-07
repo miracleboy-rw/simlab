@@ -53,41 +53,39 @@ if ($lab_filter > 0) {
 $lab_sql .= " ORDER BY pl.tgl_pinjam ASC";
 $lab_bookings = fetchAll($lab_sql, $lab_params);
 ?>
-<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:16px;gap:16px">
     <div>
-        <h1 class="page-title"><i class="fas fa-calendar-alt mr-3"></i> Kalender Jadwal Laboratorium</h1>
+        <h1 class="page-title"><span class="material-symbols-outlined mr-3">calendar_today</span> Kalender Jadwal Laboratorium</h1>
         <p class="page-subtitle">Jadwal peminjaman lab, praktikum, riset, dan perawatan alat</p>
     </div>
     <?php if (isRole('laboran')): ?>
-    <button class="btn-glass btn-glass-primary" onclick="document.getElementById('tambahModal').classList.remove('hidden')"><i class="fas fa-plus mr-2"></i> Tambah Event</button>
+    <button class="btn btn-primary btn-md3" onclick="document.getElementById('tambahModal').classList.remove('hidden')"><span class="material-symbols-outlined mr-2">add</span> Tambah Event</button>
     <?php endif; ?>
 </div>
 
-<?= showAlert() ?>
-
 <!-- Lab Filter Tabs -->
-<div class="glass-card p-2 mb-6 overflow-x-auto">
-    <div class="flex gap-2 min-w-max">
+<div class="card p-2 mb-6">
+    <div class="flex gap-2 flex-wrap">
         <a href="kalender.php" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all <?= $lab_filter == 0 ? 'bg-primary text-white shadow-md' : 'text-muted hover:text-navy hover:bg-soft' ?>">
-            <i class="fas fa-layer-group mr-1"></i> Semua Lab
+            <span class="material-symbols-outlined mr-1">layers</span> Semua Lab
         </a>
         <?php foreach ($all_labs as $lb): ?>
         <a href="kalender.php?lab_id=<?= $lb['id'] ?>" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all <?= $lab_filter == $lb['id'] ? 'bg-primary text-white shadow-md' : 'text-muted hover:text-navy hover:bg-soft' ?>">
-            <i class="fas fa-door-open mr-1"></i> <?= htmlspecialchars($lb['kode_lab']) ?>
+            <span class="material-symbols-outlined mr-1">door_front</span> <?= htmlspecialchars($lb['kode_lab']) ?>
         </a>
         <?php endforeach; ?>
     </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-    <div class="lg:col-span-3">
-        <div class="glass-card p-6">
+<div class="grid-4" style="gap:24px">
+    <div style="grid-column:span 3">
+        <div class="card p-6">
             <div id="calendar"></div>
         </div>
     </div>
-    <div class="lg:col-span-1">
-        <div class="glass-card p-6">
-            <h5 class="font-bold text-navy mb-4"><i class="fas fa-info-circle mr-2"></i>Keterangan</h5>
+    <div style="grid-column:span 1">
+        <div class="card p-6">
+            <h5 class="font-bold  mb-4"><span class="material-symbols-outlined mr-2">info</span>Keterangan</h5>
             <p class="mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#6E38F7;display:inline-block;"></span> Lab Disetujui</p>
             <p class="mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#B794F4;display:inline-block;opacity:0.6;"></span> Lab Pending</p>
             <p class="mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#28a745;display:inline-block;"></span> Praktikum</p>
@@ -95,7 +93,7 @@ $lab_bookings = fetchAll($lab_sql, $lab_params);
             <p class="mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#ffc107;display:inline-block;"></span> Maintenance</p>
             <p class="mb-2 flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:#dc3545;display:inline-block;"></span> Kalibrasi</p>
             <hr class="divider my-4">
-            <h6 class="font-bold text-navy mb-3"><i class="fas fa-list mr-2"></i>Jadwal Mendatang</h6>
+            <h6 class="font-bold  mb-3"><span class="material-symbols-outlined mr-2">list</span>Jadwal Mendatang</h6>
             <ul class="space-y-3" id="jadwalList">
                 <?php
                 $all_upcoming = [];
@@ -114,7 +112,7 @@ $lab_bookings = fetchAll($lab_sql, $lab_params);
                 <?php foreach ($shown as $s): ?>
                     <li class="pb-2 text-sm" style="border-bottom:1px solid rgba(0,0,0,0.05);cursor:pointer"
                         onclick="showDetail(<?= htmlspecialchars(json_encode($s, JSON_HEX_APOS|JSON_HEX_QUOT)) ?>)">
-                        <span class="font-bold text-navy"><?= formatTanggalIndo($s['tgl']) ?></span><br>
+                        <span class="font-bold "><?= formatTanggalIndo($s['tgl']) ?></span><br>
                         <span class="inline-flex items-center gap-1">
                             <span class="w-2 h-2 rounded-full" style="background:<?= $s['warna'] ?>;display:inline-block;"></span>
                             <?= htmlspecialchars($s['judul']) ?>
@@ -128,7 +126,7 @@ $lab_bookings = fetchAll($lab_sql, $lab_params);
 
 <!-- Modal Detail Event -->
 <div id="detailEventModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="glass-modal-content w-full max-w-lg mx-4" id="detailModalContent"></div>
+    <div class="card w-full max-w-lg mx-4" id="detailModalContent"></div>
 </div>
 
 <script>
@@ -141,69 +139,69 @@ function showDetail(data) {
         const tglPinjam = new Date(b.tgl_pinjam + 'T' + (b.jam_mulai || '08:00')).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
         const tglKembaliStr = new Date(b.tgl_kembali + 'T' + (b.jam_selesai || '17:00')).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
 
-        html = `<div class="modal-header flex justify-between items-center">
-                    <h5 class="font-bold text-lg"><i class="fas fa-door-open mr-2" style="color:${data.warna}"></i>Detail Peminjaman Lab</h5>
-                    <button type="button" class="text-gray-400 hover:text-navy text-xl" onclick="document.getElementById('detailEventModal').classList.add('hidden')">&times;</button>
+        html = `<div class="card-header flex justify-between items-center">
+                    <h5 class="font-bold text-lg"><span class="material-symbols-outlined mr-2" style="color:${data.warna}">door_front</span>Detail Peminjaman Lab</h5>
+                    <button type="button" class="text-muted2 hover:text-navy text-xl" onclick="document.getElementById('detailEventModal').classList.add('hidden')">&times;</button>
                 </div>
-                <div class="modal-body space-y-4">
+                <div class="card-body space-y-4">
                     <div class="col-span-2 p-4 rounded-2xl" style="background:${data.warna}15;border:1px solid ${data.warna}30">
-                        <h6 class="font-bold text-navy text-lg">${b.nama_lab}</h6>
+                        <h6 class="font-bold  text-lg">${b.nama_lab}</h6>
                         <p class="text-sm text-muted">${b.kode_lab} &middot; Kapasitas ${b.kapasitas} orang</p>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <span class="text-xs text-muted block mb-1">Keperluan</span>
-                            <span class="font-semibold text-navy">${b.tujuan_peminjaman}</span>
+                            <span class="font-semibold ">${b.tujuan_peminjaman}</span>
                         </div>
                         <div>
                             <span class="text-xs text-muted block mb-1">Peminjam</span>
-                            <span class="font-semibold text-navy">${b.peminjam}</span>
+                            <span class="font-semibold ">${b.peminjam}</span>
                         </div>
                         <div>
                             <span class="text-xs text-muted block mb-1">Tanggal Pinjam</span>
-                            <span class="font-semibold text-navy">${tglPinjam}</span>
+                            <span class="font-semibold ">${tglPinjam}</span>
                         </div>
                         <div>
                             <span class="text-xs text-muted block mb-1">Tanggal Kembali</span>
-                            <span class="font-semibold text-navy">${tglKembaliStr}</span>
+                            <span class="font-semibold ">${tglKembaliStr}</span>
                         </div>
                         <div>
                             <span class="text-xs text-muted block mb-1">Jam Mulai</span>
-                            <span class="font-semibold text-navy">${b.jam_mulai}</span>
+                            <span class="font-semibold ">${b.jam_mulai}</span>
                         </div>
                         <div>
                             <span class="text-xs text-muted block mb-1">Jam Selesai</span>
-                            <span class="font-semibold text-navy">${b.jam_selesai}</span>
+                            <span class="font-semibold ">${b.jam_selesai}</span>
                         </div>
                         <div>
                             <span class="text-xs text-muted block mb-1">Status</span>
-                            <span class="glass-badge ${b.status==='Approved'?'badge-success':'badge-warning'}">${b.status}</span>
+                            <span class="badge ${b.status==='Approved'?'badge-success':'badge-warning'}">${b.status}</span>
                         </div>
                         <div class="col-span-2 p-3 rounded-2xl bg-emerald-50 border border-emerald-200">
-                            <span class="text-xs text-emerald-700 block mb-1"><i class="fas fa-clock mr-1"></i>Tersedia Kembali</span>
+                            <span class="text-xs text-emerald-700 block mb-1"><span class="material-symbols-outlined mr-1">schedule</span>Tersedia Kembali</span>
                             <span class="font-bold text-emerald-800">${tersedia}</span>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer flex justify-end">
-                    <button type="button" class="btn-glass btn-glass-outline" onclick="document.getElementById('detailEventModal').classList.add('hidden')">Tutup</button>
+                <div class="card-footer flex justify-end">
+                    <button type="button" class="btn btn-outline" onclick="document.getElementById('detailEventModal').classList.add('hidden')">Tutup</button>
                 </div>`;
     } else {
         const tgl = new Date(data.tgl + 'T00:00:00').toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
-        html = `<div class="modal-header flex justify-between items-center">
-                    <h5 class="font-bold text-lg"><i class="fas fa-calendar-alt mr-2" style="color:${data.warna}"></i>${data.judul}</h5>
-                    <button type="button" class="text-gray-400 hover:text-navy text-xl" onclick="document.getElementById('detailEventModal').classList.add('hidden')">&times;</button>
+        html = `<div class="card-header flex justify-between items-center">
+                    <h5 class="font-bold text-lg"><span class="material-symbols-outlined mr-2" style="color:${data.warna}">calendar_today</span>${data.judul}</h5>
+                    <button type="button" class="text-muted2 hover:text-navy text-xl" onclick="document.getElementById('detailEventModal').classList.add('hidden')">&times;</button>
                 </div>
-                <div class="modal-body space-y-3">
+                <div class="card-body space-y-3">
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 rounded-full" style="background:${data.warna};display:inline-block"></span>
-                        <span class="glass-badge badge-info">${data.tipe}</span>
-                        ${data.lab_nama ? `<span class="glass-badge badge-primary"><i class="fas fa-door-open mr-1"></i>${data.lab_nama}</span>` : ''}
+                        <span class="badge badge-info">${data.tipe}</span>
+                        ${data.lab_nama ? `<span class="badge badge-primary"><span class="material-symbols-outlined mr-1">door_front</span>${data.lab_nama}</span>` : ''}
                     </div>
-                    <p class="text-sm text-muted">Tanggal: <span class="font-semibold text-navy">${tgl}</span></p>
+                    <p class="text-sm text-muted">Tanggal: <span class="font-semibold ">${tgl}</span></p>
                 </div>
-                <div class="modal-footer flex justify-end">
-                    <button type="button" class="btn-glass btn-glass-outline" onclick="document.getElementById('detailEventModal').classList.add('hidden')">Tutup</button>
+                <div class="card-footer flex justify-end">
+                    <button type="button" class="btn btn-outline" onclick="document.getElementById('detailEventModal').classList.add('hidden')">Tutup</button>
                 </div>`;
     }
     document.getElementById('detailModalContent').innerHTML = html;
@@ -291,21 +289,21 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php if (isRole('laboran')): ?>
 <!-- Modal Tambah -->
 <div id="tambahModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="glass-modal-content w-full max-w-xl mx-4">
+    <div class="card w-full max-w-xl mx-4">
         <form method="POST">
             <input type="hidden" name="action" value="tambah">
             <input type="hidden" name="lab_id" value="<?= $lab_filter ?>">
-            <div class="modal-header flex justify-between items-center"><h5 class="font-bold text-lg"><i class="fas fa-plus-circle mr-2"></i>Tambah Event Baru</h5><button type="button" class="text-gray-400 hover:text-navy text-xl" onclick="document.getElementById('tambahModal').classList.add('hidden')">&times;</button></div>
-            <div class="modal-body">
+            <div class="card-header flex justify-between items-center"><h5 class="font-bold text-lg"><span class="material-symbols-outlined mr-2">add_circle</span>Tambah Event Baru</h5><button type="button" class="text-muted2 hover:text-navy text-xl" onclick="document.getElementById('tambahModal').classList.add('hidden')">&times;</button></div>
+            <div class="card-body">
                 <div class="grid grid-cols-1 gap-4">
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Judul Event</label><input type="text" name="judul" class="glass-input" required></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-semibold text-navy mb-1">Tanggal Mulai</label><input type="date" name="tgl_mulai" class="glass-input" required></div>
-                        <div><label class="block text-sm font-semibold text-navy mb-1">Tanggal Selesai</label><input type="date" name="tgl_selesai" class="glass-input"></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px">Judul Event</label><input type="text" name="judul" class="form-input" required></div>
+                    <div class="grid-2">
+                        <div><label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px">Tanggal Mulai</label><input type="date" name="tgl_mulai" class="form-input" required></div>
+                        <div><label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px">Tanggal Selesai</label><input type="date" name="tgl_selesai" class="form-input"></div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-semibold text-navy mb-1">Tipe</label>
-                            <select name="tipe" class="glass-input" required>
+                    <div class="grid-2">
+                        <div><label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px">Tipe</label>
+                            <select name="tipe" class="form-input" required>
                                 <option value="Praktikum">Praktikum</option>
                                 <option value="Riset">Riset</option>
                                 <option value="Maintenance">Maintenance</option>
@@ -313,18 +311,18 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <option value="Lainnya">Lainnya</option>
                             </select>
                         </div>
-                        <div><label class="block text-sm font-semibold text-navy mb-1">Warna</label>
+                        <div><label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px">Warna</label>
                             <div class="flex gap-2 items-center">
                                 <input type="color" name="warna" class="w-10 h-10 rounded-xl border-0 cursor-pointer" value="#3788d8" style="background:transparent">
-                                <input type="text" name="warna_text" class="glass-input flex-1" value="#3788d8" maxlength="7" oninput="this.previousElementSibling.value=this.value" onchange="this.previousElementSibling.value=this.value">
+                                <input type="text" name="warna_text" class="form-input flex-1" value="#3788d8" maxlength="7" oninput="this.previousElementSibling.value=this.value" onchange="this.previousElementSibling.value=this.value">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer flex justify-end gap-2">
-                <button type="button" class="btn-glass btn-glass-outline" onclick="document.getElementById('tambahModal').classList.add('hidden')">Batal</button>
-                <button type="submit" class="btn-glass btn-glass-primary"><i class="fas fa-save mr-2"></i> Simpan</button>
+            <div class="card-footer flex justify-end gap-2">
+                <button type="button" class="btn btn-outline btn-md3" onclick="document.getElementById('tambahModal').classList.add('hidden')">Batal</button>
+                <button type="submit" class="btn btn-primary btn-md3"><span class="material-symbols-outlined mr-2">save</span> Simpan</button>
             </div>
         </form>
     </div>
@@ -332,21 +330,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <?php foreach ($manual_events as $e): ?>
 <div id="editModal<?= $e['id'] ?>" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="glass-modal-content w-full max-w-xl mx-4">
+    <div class="card w-full max-w-xl mx-4">
         <form method="POST">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="id" value="<?= $e['id'] ?>">
-            <div class="modal-header flex justify-between items-center"><h5 class="font-bold text-lg"><i class="fas fa-pen mr-2"></i>Edit Event</h5><button type="button" class="text-gray-400 hover:text-navy text-xl" onclick="document.getElementById('editModal<?= $e['id'] ?>').classList.add('hidden')">&times;</button></div>
-            <div class="modal-body">
+            <div class="card-header flex justify-between items-center"><h5 class="font-bold text-lg"><span class="material-symbols-outlined mr-2">edit</span>Edit Event</h5><button type="button" class="text-muted2 hover:text-navy text-xl" onclick="document.getElementById('editModal<?= $e['id'] ?>').classList.add('hidden')">&times;</button></div>
+            <div class="card-body">
                 <div class="grid grid-cols-1 gap-4">
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Judul Event</label><input type="text" name="judul" class="glass-input" value="<?= htmlspecialchars($e['judul']) ?>" required></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-semibold text-navy mb-1">Tanggal Mulai</label><input type="date" name="tgl_mulai" class="glass-input" value="<?= $e['tgl_mulai'] ?>" required></div>
-                        <div><label class="block text-sm font-semibold text-navy mb-1">Tanggal Selesai</label><input type="date" name="tgl_selesai" class="glass-input" value="<?= $e['tgl_selesai'] ?>"></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px">Judul Event</label><input type="text" name="judul" class="form-input" value="<?= htmlspecialchars($e['judul']) ?>" required></div>
+                    <div class="grid-2">
+                        <div><label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px">Tanggal Mulai</label><input type="date" name="tgl_mulai" class="form-input" value="<?= $e['tgl_mulai'] ?>" required></div>
+                        <div><label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px">Tanggal Selesai</label><input type="date" name="tgl_selesai" class="form-input" value="<?= $e['tgl_selesai'] ?>"></div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-semibold text-navy mb-1">Tipe</label>
-                            <select name="tipe" class="glass-input" required>
+                    <div class="grid-2">
+                        <div><label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px">Tipe</label>
+                            <select name="tipe" class="form-input" required>
                                 <option value="Praktikum" <?= $e['tipe']=='Praktikum'?'selected':'' ?>>Praktikum</option>
                                 <option value="Riset" <?= $e['tipe']=='Riset'?'selected':'' ?>>Riset</option>
                                 <option value="Maintenance" <?= $e['tipe']=='Maintenance'?'selected':'' ?>>Maintenance</option>
@@ -354,18 +352,18 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <option value="Lainnya" <?= $e['tipe']=='Lainnya'?'selected':'' ?>>Lainnya</option>
                             </select>
                         </div>
-                        <div><label class="block text-sm font-semibold text-navy mb-1">Warna</label>
+                        <div><label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px">Warna</label>
                             <div class="flex gap-2 items-center">
                                 <input type="color" name="warna" class="w-10 h-10 rounded-xl border-0 cursor-pointer" value="<?= htmlspecialchars($e['warna']) ?>" style="background:transparent">
-                                <input type="text" name="warna_text" class="glass-input flex-1" value="<?= htmlspecialchars($e['warna']) ?>" maxlength="7" oninput="this.previousElementSibling.value=this.value" onchange="this.previousElementSibling.value=this.value">
+                                <input type="text" name="warna_text" class="form-input flex-1" value="<?= htmlspecialchars($e['warna']) ?>" maxlength="7" oninput="this.previousElementSibling.value=this.value" onchange="this.previousElementSibling.value=this.value">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer flex justify-end gap-2">
-                <button type="button" class="btn-glass btn-glass-outline" onclick="document.getElementById('editModal<?= $e['id'] ?>').classList.add('hidden')">Batal</button>
-                <button type="submit" class="btn-glass btn-glass-primary"><i class="fas fa-save mr-2"></i> Simpan</button>
+            <div class="card-footer flex justify-end gap-2">
+                <button type="button" class="btn btn-outline btn-md3" onclick="document.getElementById('editModal<?= $e['id'] ?>').classList.add('hidden')">Batal</button>
+                <button type="submit" class="btn btn-primary btn-md3"><span class="material-symbols-outlined mr-2">save</span> Simpan</button>
             </div>
         </form>
     </div>

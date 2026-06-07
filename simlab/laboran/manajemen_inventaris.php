@@ -6,7 +6,6 @@ require_once '../includes/auth_check.php';
 if (!isRole('laboran')) { alert('danger', 'Akses ditolak!'); redirect('../index.php'); }
 $base_url = '../';
 $page_title = 'Manajemen Inventaris';
-include '../includes/header.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -62,20 +61,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('manajemen_inventaris.php');
 }
 
+include '../includes/header.php';
+
 $alat_list = fetchAll("SELECT * FROM alat ORDER BY nama_alat ASC");
 ?>
-<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px">
     <div>
-        <h1 class="page-title"><i class="fas fa-box mr-3"></i> Manajemen Inventaris Alat</h1>
+        <h1 class="page-title"><span class="material-symbols-outlined mr-3">inventory_2</span> Manajemen Inventaris Alat</h1>
         <p class="page-subtitle">Kelola data alat laboratorium</p>
     </div>
-    <button class="btn-glass btn-glass-primary" onclick="document.getElementById('tambahModal').classList.remove('hidden')"><i class="fas fa-plus mr-2"></i> Tambah Alat</button>
+    <button class="btn btn-primary btn-md3" onclick="document.getElementById('tambahModal').classList.remove('hidden')"><span class="material-symbols-outlined mr-2">add</span> Tambah Alat</button>
 </div>
 
-<div class="glass-card p-6">
-    <h5 class="font-bold text-navy mb-4"><i class="fas fa-list mr-2"></i> Daftar Alat Laboratorium</h5>
-    <div class="overflow-x-auto">
-        <table class="glass-table datatable">
+<div class="card p-5">
+    <h5 style="font-weight:700; color:#111827" class="mb-4"><span class="material-symbols-outlined mr-2">list</span> Daftar Alat Laboratorium</h5>
+    <div class="table-wrapper">
+        <table class="table datatable">
             <thead>
                 <tr>
                     <th>No</th><th>Kode</th><th>Nama Alat</th><th>Merk</th><th>Lokasi</th><th>Stok</th><th>Status</th><th>Aksi</th>
@@ -85,7 +86,7 @@ $alat_list = fetchAll("SELECT * FROM alat ORDER BY nama_alat ASC");
                 <?php foreach ($alat_list as $i => $a): ?>
                 <tr>
                     <td><?= $i + 1 ?></td>
-                    <td><span class="glass-badge badge-dark"><?= htmlspecialchars($a['kode_alat']) ?></span></td>
+                    <td><span class="badge" style="background:#374151; color:#fff"><?= htmlspecialchars($a['kode_alat']) ?></span></td>
                     <td><?= htmlspecialchars($a['nama_alat']) ?></td>
                     <td><?= htmlspecialchars($a['merk'] ?: '-') ?></td>
                     <td><?= htmlspecialchars($a['lokasi_penyimpanan'] ?: '-') ?></td>
@@ -93,8 +94,8 @@ $alat_list = fetchAll("SELECT * FROM alat ORDER BY nama_alat ASC");
                     <td><?= statusBadge($a['status']) ?></td>
                     <td>
                         <div class="flex gap-1">
-                            <button class="btn-glass btn-glass-warning btn-sm" onclick="document.getElementById('editModal<?= $a['id'] ?>').classList.remove('hidden')"><i class="fas fa-pen"></i></button>
-                            <button class="btn-glass btn-glass-danger btn-sm" onclick="confirmHapus(<?= $a['id'] ?>, '<?= addslashes($a['nama_alat']) ?>')"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-warning btn-sm btn-md3" onclick="document.getElementById('editModal<?= $a['id'] ?>').classList.remove('hidden')"><span class="material-symbols-outlined">edit</span></button>
+                            <button class="btn btn-danger btn-sm btn-md3" onclick="confirmHapus(<?= $a['id'] ?>, '<?= addslashes($a['nama_alat']) ?>')"><span class="material-symbols-outlined">delete</span></button>
                         </div>
                     </td>
                 </tr>
@@ -106,24 +107,24 @@ $alat_list = fetchAll("SELECT * FROM alat ORDER BY nama_alat ASC");
 
 <!-- Modal Tambah -->
 <div id="tambahModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="glass-modal-content w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+    <div class="card w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto p-5">
         <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="action" value="tambah">
-            <div class="modal-header flex justify-between items-center"><h5 class="font-bold text-lg"><i class="fas fa-plus-circle mr-2"></i>Tambah Alat Baru</h5><button type="button" class="text-gray-400 hover:text-navy text-xl" onclick="document.getElementById('tambahModal').classList.add('hidden')">&times;</button></div>
-            <div class="modal-body">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Kode Alat</label><input type="text" name="kode_alat" class="glass-input" required></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Nama Alat</label><input type="text" name="nama_alat" class="glass-input" required></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Merk</label><input type="text" name="merk" class="glass-input"></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Lokasi Penyimpanan</label><input type="text" name="lokasi_penyimpanan" class="glass-input"></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Stok Total</label><input type="number" name="stok_total" class="glass-input" value="1" min="1" required></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Foto Alat</label><input type="file" name="foto" class="glass-input" accept="image/*"></div>
-                    <div class="md:col-span-2"><label class="block text-sm font-semibold text-navy mb-1">Spesifikasi</label><textarea name="spesifikasi" class="glass-input" rows="3"></textarea></div>
+            <div class="card-header flex justify-between items-center"><h5 style="font-weight:700" class="text-lg"><span class="material-symbols-outlined mr-2">add_circle</span>Tambah Alat Baru</h5><button type="button" style="color:#9CA3AF; font-size:1.5rem; background:none; border:none; cursor:pointer" onclick="document.getElementById('tambahModal').classList.add('hidden')">&times;</button></div>
+            <div class="card-body">
+                <div class="grid-2">
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Kode Alat</label><input type="text" name="kode_alat" class="form-input" required></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Nama Alat</label><input type="text" name="nama_alat" class="form-input" required></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Merk</label><input type="text" name="merk" class="form-input"></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Lokasi Penyimpanan</label><input type="text" name="lokasi_penyimpanan" class="form-input"></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Stok Total</label><input type="number" name="stok_total" class="form-input" value="1" min="1" required></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Foto Alat</label><input type="file" name="foto" class="form-input" accept="image/*"></div>
+                    <div class="col-span-2"><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Spesifikasi</label><textarea name="spesifikasi" class="form-input" rows="3"></textarea></div>
                 </div>
             </div>
-            <div class="modal-footer flex justify-end gap-2">
-                <button type="button" class="btn-glass btn-glass-outline" onclick="document.getElementById('tambahModal').classList.add('hidden')">Batal</button>
-                <button type="submit" class="btn-glass btn-glass-primary"><i class="fas fa-save mr-2"></i> Simpan</button>
+            <div class="card-footer flex justify-end gap-2">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('tambahModal').classList.add('hidden')">Batal</button>
+                <button type="submit" class="btn btn-primary btn-md3"><span class="material-symbols-outlined mr-2">save</span> Simpan</button>
             </div>
         </form>
     </div>
@@ -131,20 +132,20 @@ $alat_list = fetchAll("SELECT * FROM alat ORDER BY nama_alat ASC");
 
 <?php foreach ($alat_list as $a): ?>
 <div id="editModal<?= $a['id'] ?>" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="glass-modal-content w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+    <div class="card w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto p-5">
         <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="id" value="<?= $a['id'] ?>">
-            <div class="modal-header flex justify-between items-center"><h5 class="font-bold text-lg"><i class="fas fa-pen mr-2"></i>Edit Alat: <?= htmlspecialchars($a['nama_alat']) ?></h5><button type="button" class="text-gray-400 hover:text-navy text-xl" onclick="document.getElementById('editModal<?= $a['id'] ?>').classList.add('hidden')">&times;</button></div>
-            <div class="modal-body">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Kode Alat</label><input type="text" name="kode_alat" class="glass-input" value="<?= htmlspecialchars($a['kode_alat']) ?>" required></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Nama Alat</label><input type="text" name="nama_alat" class="glass-input" value="<?= htmlspecialchars($a['nama_alat']) ?>" required></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Merk</label><input type="text" name="merk" class="glass-input" value="<?= htmlspecialchars($a['merk']) ?>"></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Lokasi</label><input type="text" name="lokasi_penyimpanan" class="glass-input" value="<?= htmlspecialchars($a['lokasi_penyimpanan']) ?>"></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Stok Total</label><input type="number" name="stok_total" class="glass-input" value="<?= (int)$a['stok_total'] ?>" min="1" required></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Status</label>
-                        <select name="status" class="glass-input">
+            <div class="card-header flex justify-between items-center"><h5 style="font-weight:700" class="text-lg"><span class="material-symbols-outlined mr-2">edit</span>Edit Alat: <?= htmlspecialchars($a['nama_alat']) ?></h5><button type="button" style="color:#9CA3AF; font-size:1.5rem; background:none; border:none; cursor:pointer" onclick="document.getElementById('editModal<?= $a['id'] ?>').classList.add('hidden')">&times;</button></div>
+            <div class="card-body">
+                <div class="grid-2">
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Kode Alat</label><input type="text" name="kode_alat" class="form-input" value="<?= htmlspecialchars($a['kode_alat']) ?>" required></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Nama Alat</label><input type="text" name="nama_alat" class="form-input" value="<?= htmlspecialchars($a['nama_alat']) ?>" required></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Merk</label><input type="text" name="merk" class="form-input" value="<?= htmlspecialchars($a['merk']) ?>"></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Lokasi</label><input type="text" name="lokasi_penyimpanan" class="form-input" value="<?= htmlspecialchars($a['lokasi_penyimpanan']) ?>"></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Stok Total</label><input type="number" name="stok_total" class="form-input" value="<?= (int)$a['stok_total'] ?>" min="1" required></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Status</label>
+                        <select name="status" class="form-input">
                             <option value="Tersedia" <?= $a['status'] == 'Tersedia' ? 'selected' : '' ?>>Tersedia</option>
                             <option value="Dipinjam" <?= $a['status'] == 'Dipinjam' ? 'selected' : '' ?>>Dipinjam</option>
                             <option value="Rusak" <?= $a['status'] == 'Rusak' ? 'selected' : '' ?>>Rusak</option>
@@ -152,13 +153,13 @@ $alat_list = fetchAll("SELECT * FROM alat ORDER BY nama_alat ASC");
                             <option value="Tidak Tersedia" <?= $a['status'] == 'Tidak Tersedia' ? 'selected' : '' ?>>Tidak Tersedia</option>
                         </select>
                     </div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Foto Baru</label><input type="file" name="foto" class="glass-input" accept="image/*"></div>
-                    <div class="md:col-span-2"><label class="block text-sm font-semibold text-navy mb-1">Spesifikasi</label><textarea name="spesifikasi" class="glass-input" rows="3"><?= htmlspecialchars($a['spesifikasi']) ?></textarea></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Foto Baru</label><input type="file" name="foto" class="form-input" accept="image/*"></div>
+                    <div class="col-span-2"><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Spesifikasi</label><textarea name="spesifikasi" class="form-input" rows="3"><?= htmlspecialchars($a['spesifikasi']) ?></textarea></div>
                 </div>
             </div>
-            <div class="modal-footer flex justify-end gap-2">
-                <button type="button" class="btn-glass btn-glass-outline" onclick="document.getElementById('editModal<?= $a['id'] ?>').classList.add('hidden')">Batal</button>
-                <button type="submit" class="btn-glass btn-glass-primary"><i class="fas fa-save mr-2"></i> Simpan</button>
+            <div class="card-footer flex justify-end gap-2">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('editModal<?= $a['id'] ?>').classList.add('hidden')">Batal</button>
+                <button type="submit" class="btn btn-primary btn-md3"><span class="material-symbols-outlined mr-2">save</span> Simpan</button>
             </div>
         </form>
     </div>

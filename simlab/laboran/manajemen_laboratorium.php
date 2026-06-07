@@ -6,7 +6,6 @@ require_once '../includes/auth_check.php';
 if (!isRole('laboran')) { alert('danger', 'Akses ditolak!'); redirect('../index.php'); }
 $base_url = '../';
 $page_title = 'Kelola Laboratorium';
-include '../includes/header.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
@@ -43,22 +42,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('manajemen_laboratorium.php');
 }
 
+include '../includes/header.php';
+
 $lab_list = fetchAll("SELECT * FROM laboratorium ORDER BY kode_lab ASC");
 ?>
-<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:24px;gap:16px">
     <div>
-        <h1 class="page-title"><i class="fas fa-door-open mr-3"></i> Kelola Ruangan Laboratorium</h1>
+        <h1 class="page-title"><span class="material-symbols-outlined mr-3">meeting_room</span> Kelola Ruangan Laboratorium</h1>
         <p class="page-subtitle">Tambah, edit, atau hapus data laboratorium</p>
     </div>
-    <button class="btn-glass btn-glass-primary" onclick="document.getElementById('tambahModal').classList.remove('hidden')"><i class="fas fa-plus mr-2"></i> Tambah Lab</button>
+    <button class="btn btn-primary btn-md3" onclick="document.getElementById('tambahModal').classList.remove('hidden')"><span class="material-symbols-outlined mr-2">add</span> Tambah Lab</button>
 </div>
 
-<?= showAlert() ?>
-
-<div class="glass-card p-6">
-    <h5 class="font-bold text-navy mb-4"><i class="fas fa-list mr-2"></i> Daftar Laboratorium</h5>
-    <div class="overflow-x-auto">
-        <table class="glass-table datatable">
+<div class="card p-5">
+    <h5 style="font-weight:700; color:#111827" class="mb-4"><span class="material-symbols-outlined mr-2">list</span> Daftar Laboratorium</h5>
+    <div class="table-wrapper">
+        <table class="table datatable">
             <thead>
                 <tr><th>No</th><th>Kode</th><th>Nama Lab</th><th>Lokasi</th><th>Kapasitas</th><th>Status</th><th>Aksi</th></tr>
             </thead>
@@ -66,15 +65,15 @@ $lab_list = fetchAll("SELECT * FROM laboratorium ORDER BY kode_lab ASC");
                 <?php foreach ($lab_list as $i => $l): ?>
                 <tr>
                     <td><?= $i + 1 ?></td>
-                    <td><span class="glass-badge badge-dark"><?= htmlspecialchars($l['kode_lab']) ?></span></td>
+                    <td><span class="badge" style="background:#374151; color:#fff"><?= htmlspecialchars($l['kode_lab']) ?></span></td>
                     <td class="font-medium"><?= htmlspecialchars($l['nama_lab']) ?></td>
                     <td><?= htmlspecialchars($l['lokasi'] ?: '-') ?></td>
                     <td><?= (int)$l['kapasitas'] ?> orang</td>
                     <td><?= statusBadge($l['status']) ?></td>
                     <td>
                         <div class="flex gap-1">
-                            <button class="btn-glass btn-glass-warning btn-sm" onclick="document.getElementById('editModal<?= $l['id'] ?>').classList.remove('hidden')"><i class="fas fa-pen"></i></button>
-                            <button class="btn-glass btn-glass-danger btn-sm" onclick="confirmHapus(<?= $l['id'] ?>, '<?= addslashes($l['nama_lab']) ?>')"><i class="fas fa-trash"></i></button>
+                            <button class="btn btn-warning btn-sm btn-md3" onclick="document.getElementById('editModal<?= $l['id'] ?>').classList.remove('hidden')"><span class="material-symbols-outlined">edit</span></button>
+                            <button class="btn btn-danger btn-sm btn-md3" onclick="confirmHapus(<?= $l['id'] ?>, '<?= addslashes($l['nama_lab']) ?>')"><span class="material-symbols-outlined">delete</span></button>
                         </div>
                     </td>
                 </tr>
@@ -85,23 +84,23 @@ $lab_list = fetchAll("SELECT * FROM laboratorium ORDER BY kode_lab ASC");
 </div>
 
 <div id="tambahModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="glass-modal-content w-full max-w-xl mx-4">
+    <div class="card w-full max-w-xl mx-4 p-5">
         <form method="POST">
             <input type="hidden" name="action" value="tambah">
-            <div class="modal-header flex justify-between items-center"><h5 class="font-bold text-lg"><i class="fas fa-plus-circle mr-2"></i>Tambah Laboratorium Baru</h5><button type="button" class="text-gray-400 hover:text-navy text-xl" onclick="document.getElementById('tambahModal').classList.add('hidden')">&times;</button></div>
-            <div class="modal-body">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Kode Lab</label><input type="text" name="kode_lab" class="glass-input" placeholder="Contoh: LAB-SJ" required></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Nama Lab</label><input type="text" name="nama_lab" class="glass-input" required></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Lokasi</label><input type="text" name="lokasi" class="glass-input" placeholder="Gedung / Lantai"></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Kapasitas (orang)</label><input type="number" name="kapasitas" class="glass-input" value="15" min="1" required></div>
-                    <div class="md:col-span-2"><label class="block text-sm font-semibold text-navy mb-1">Deskripsi</label><textarea name="deskripsi" class="glass-input" rows="2"></textarea></div>
-                    <div class="md:col-span-2"><label class="block text-sm font-semibold text-navy mb-1">Fasilitas</label><textarea name="fasilitas" class="glass-input" rows="2" placeholder="Microscope, Laminar Air Flow, dll"></textarea></div>
+            <div class="card-header flex justify-between items-center"><h5 style="font-weight:700" class="text-lg"><span class="material-symbols-outlined mr-2">add_circle</span>Tambah Laboratorium Baru</h5><button type="button" style="color:#9CA3AF; font-size:1.5rem; background:none; border:none; cursor:pointer" onclick="document.getElementById('tambahModal').classList.add('hidden')">&times;</button></div>
+            <div class="card-body">
+                <div class="grid-2">
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Kode Lab</label><input type="text" name="kode_lab" class="form-input" placeholder="Contoh: LAB-SJ" required></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Nama Lab</label><input type="text" name="nama_lab" class="form-input" required></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Lokasi</label><input type="text" name="lokasi" class="form-input" placeholder="Gedung / Lantai"></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Kapasitas (orang)</label><input type="number" name="kapasitas" class="form-input" value="15" min="1" required></div>
+                    <div class="col-span-2"><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Deskripsi</label><textarea name="deskripsi" class="form-input" rows="2"></textarea></div>
+                    <div class="col-span-2"><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Fasilitas</label><textarea name="fasilitas" class="form-input" rows="2" placeholder="Microscope, Laminar Air Flow, dll"></textarea></div>
                 </div>
             </div>
-            <div class="modal-footer flex justify-end gap-2">
-                <button type="button" class="btn-glass btn-glass-outline" onclick="document.getElementById('tambahModal').classList.add('hidden')">Batal</button>
-                <button type="submit" class="btn-glass btn-glass-primary"><i class="fas fa-save mr-2"></i> Simpan</button>
+            <div class="card-footer flex justify-end gap-2">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('tambahModal').classList.add('hidden')">Batal</button>
+                <button type="submit" class="btn btn-primary btn-md3"><span class="material-symbols-outlined mr-2">save</span> Simpan</button>
             </div>
         </form>
     </div>
@@ -109,31 +108,31 @@ $lab_list = fetchAll("SELECT * FROM laboratorium ORDER BY kode_lab ASC");
 
 <?php foreach ($lab_list as $l): ?>
 <div id="editModal<?= $l['id'] ?>" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden" onclick="if(event.target===this)this.classList.add('hidden')">
-    <div class="glass-modal-content w-full max-w-xl mx-4">
+    <div class="card w-full max-w-xl mx-4 p-5">
         <form method="POST">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="id" value="<?= $l['id'] ?>">
-            <div class="modal-header flex justify-between items-center"><h5 class="font-bold text-lg"><i class="fas fa-pen mr-2"></i>Edit: <?= htmlspecialchars($l['nama_lab']) ?></h5><button type="button" class="text-gray-400 hover:text-navy text-xl" onclick="document.getElementById('editModal<?= $l['id'] ?>').classList.add('hidden')">&times;</button></div>
-            <div class="modal-body">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Kode Lab</label><input type="text" name="kode_lab" class="glass-input" value="<?= htmlspecialchars($l['kode_lab']) ?>" required></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Nama Lab</label><input type="text" name="nama_lab" class="glass-input" value="<?= htmlspecialchars($l['nama_lab']) ?>" required></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Lokasi</label><input type="text" name="lokasi" class="glass-input" value="<?= htmlspecialchars($l['lokasi'] ?: '') ?>"></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Kapasitas (orang)</label><input type="number" name="kapasitas" class="glass-input" value="<?= (int)$l['kapasitas'] ?>" min="1" required></div>
-                    <div><label class="block text-sm font-semibold text-navy mb-1">Status</label>
-                        <select name="status" class="glass-input">
+            <div class="card-header flex justify-between items-center"><h5 style="font-weight:700" class="text-lg"><span class="material-symbols-outlined mr-2">edit</span>Edit: <?= htmlspecialchars($l['nama_lab']) ?></h5><button type="button" style="color:#9CA3AF; font-size:1.5rem; background:none; border:none; cursor:pointer" onclick="document.getElementById('editModal<?= $l['id'] ?>').classList.add('hidden')">&times;</button></div>
+            <div class="card-body">
+                <div class="grid-2">
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Kode Lab</label><input type="text" name="kode_lab" class="form-input" value="<?= htmlspecialchars($l['kode_lab']) ?>" required></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Nama Lab</label><input type="text" name="nama_lab" class="form-input" value="<?= htmlspecialchars($l['nama_lab']) ?>" required></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Lokasi</label><input type="text" name="lokasi" class="form-input" value="<?= htmlspecialchars($l['lokasi'] ?: '') ?>"></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Kapasitas (orang)</label><input type="number" name="kapasitas" class="form-input" value="<?= (int)$l['kapasitas'] ?>" min="1" required></div>
+                    <div><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Status</label>
+                        <select name="status" class="form-input">
                             <option value="Tersedia" <?= $l['status']=='Tersedia'?'selected':'' ?>>Tersedia</option>
                             <option value="Digunakan" <?= $l['status']=='Digunakan'?'selected':'' ?>>Digunakan</option>
                             <option value="Perbaikan" <?= $l['status']=='Perbaikan'?'selected':'' ?>>Perbaikan</option>
                         </select>
                     </div>
-                    <div class="md:col-span-2"><label class="block text-sm font-semibold text-navy mb-1">Deskripsi</label><textarea name="deskripsi" class="glass-input" rows="2"><?= htmlspecialchars($l['deskripsi'] ?: '') ?></textarea></div>
-                    <div class="md:col-span-2"><label class="block text-sm font-semibold text-navy mb-1">Fasilitas</label><textarea name="fasilitas" class="glass-input" rows="2"><?= htmlspecialchars($l['fasilitas'] ?: '') ?></textarea></div>
+                    <div style="grid-column:span 2"><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Deskripsi</label><textarea name="deskripsi" class="form-input" rows="2"><?= htmlspecialchars($l['deskripsi'] ?: '') ?></textarea></div>
+                    <div style="grid-column:span 2"><label style="display:block;font-size:12px;font-weight:600;color:#111827;margin-bottom:4px">Fasilitas</label><textarea name="fasilitas" class="form-input" rows="2"><?= htmlspecialchars($l['fasilitas'] ?: '') ?></textarea></div>
                 </div>
             </div>
-            <div class="modal-footer flex justify-end gap-2">
-                <button type="button" class="btn-glass btn-glass-outline" onclick="document.getElementById('editModal<?= $l['id'] ?>').classList.add('hidden')">Batal</button>
-                <button type="submit" class="btn-glass btn-glass-primary"><i class="fas fa-save mr-2"></i> Simpan</button>
+            <div class="card-footer flex justify-end gap-2">
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('editModal<?= $l['id'] ?>').classList.add('hidden')">Batal</button>
+                <button type="submit" class="btn btn-primary btn-md3"><span class="material-symbols-outlined mr-2">save</span> Simpan</button>
             </div>
         </form>
     </div>

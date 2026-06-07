@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
 // Setup SIFLAB-BM
 // Jalankan: http://localhost/simlab/setup.php
 
@@ -15,7 +18,7 @@ echo "<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-a
 echo "<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap' rel='stylesheet'>";
 echo "<style>body{font-family:'Inter',sans-serif;background:#F4F7FE;min-height:100vh;padding:2rem}</style></head><body>";
 echo "<div class='max-w-2xl mx-auto'><div style='background:rgba(255,255,255,0.85);backdrop-filter:blur(24px);border-radius:24px;box-shadow:0 20px 60px rgba(153,153,153,0.12);padding:2.5rem;border:1px solid rgba(255,255,255,0.5)'>";
-echo "<div class='flex items-center gap-4 mb-6'><div class='w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center'><i class='fas fa-flask text-white text-xl'></i></div><div><h1 class='text-2xl font-extrabold text-navy'>Setup SIFLAB-BM</h1><p class='text-gray-400 text-sm font-medium'>Sistem Informasi Manajemen Lab Biomedis</p></div></div>";
+echo "<div class='flex items-center gap-4 mb-6'><div class='w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center'><span class="material-symbols-outlined" style="color:white;font-size:20px">biotech</span></div><div><h1 class='text-2xl font-extrabold' style='color:#111827'>Setup SIFLAB-BM</h1><p class='text-sm' style='color:#9CA3AF'>Sistem Informasi Manajemen Lab Biomedis</p></div></div>";
 
 try {
     $pdo = new PDO("mysql:host=$host;charset=utf8mb4", $username, $password);
@@ -101,7 +104,7 @@ try {
 
     echo "<hr class='my-6 border-gray-100'>";
     echo "<div class='p-6 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10'>";
-    echo "<h3 class='text-lg font-bold text-navy mb-4'><i class='fas fa-check-circle text-primary mr-2'></i>Setup Selesai!</h3>";
+    echo "<h3 class='text-lg font-bold mb-4' style='color:#111827'><span class='material-symbols-outlined' style='color:#2a4dd7;margin-right:8px'>check_circle</span>Setup Selesai!</h3>";
     echo "<p class='text-sm text-muted mb-4'>Silakan login dengan akun demo:</p>";
     echo "<div class='space-y-2 mb-6'>";
     echo "<div class='flex items-center gap-3 p-3 rounded-xl bg-white/60'><div class='w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center text-xs font-bold'><i class='fas fa-tools'></i></div><div><span class='font-semibold text-sm'>Laboran</span><div class='text-xs text-gray-400'>laboran / admin123</div></div></div>";

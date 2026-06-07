@@ -38,37 +38,40 @@ function showAlert() {
         $type = $_SESSION['alert_type'];
         $msg = $_SESSION['alert_message'];
         unset($_SESSION['alert_type'], $_SESSION['alert_message']);
-        $icons = ['success' => 'fa-check-circle', 'danger' => 'fa-exclamation-circle', 'warning' => 'fa-exclamation-triangle', 'info' => 'fa-info-circle'];
-        $icon = $icons[$type] ?? 'fa-info-circle';
-        return "<div class=\"glass-alert alert-{$type}\" role=\"alert\">
-                    <i class=\"fas {$icon} mr-2\"></i> {$msg}
-                </div>";
+        $colors = [
+            'success' => ['bg' => '#DCFCE7', 'color' => '#166534', 'border' => '#BBF7D0'],
+            'danger' => ['bg' => '#FEE2E2', 'color' => '#991B1B', 'border' => '#FECACA'],
+            'warning' => ['bg' => '#FEF3C7', 'color' => '#92400E', 'border' => '#FDE68A'],
+            'info' => ['bg' => '#DBEAFE', 'color' => '#1E40AF', 'border' => '#93C5FD'],
+        ];
+        $c = $colors[$type] ?? $colors['info'];
+        return "<div role=\"alert\" style=\"padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;background:{$c['bg']};color:{$c['color']};border:1px solid {$c['border']}\">{$msg}</div>";
     }
     return '';
 }
 
 function statusBadge($status) {
     $map = [
-        'Pending' => 'warning',
-        'Approved' => 'success',
-        'Rejected' => 'danger',
-        'Returned' => 'primary',
-        'Overdue' => 'dark',
-        'Tersedia' => 'success',
-        'Dipinjam' => 'warning',
-        'Rusak' => 'danger',
-        'Kalibrasi' => 'info',
-        'Tidak Tersedia' => 'secondary',
-        'Dilaporkan' => 'danger',
-        'Ditangani' => 'info',
-        'Selesai' => 'success',
-        'Disetujui' => 'success',
-        'Ditolak' => 'danger',
-        'Terjadwal' => 'info',
-        'Sedang Berjalan' => 'warning',
+        'Pending' => ['color' => '#D97706', 'bg' => '#FEF3C7'],
+        'Approved' => ['color' => '#16A34A', 'bg' => '#DCFCE7'],
+        'Rejected' => ['color' => '#DC2626', 'bg' => '#FEE2E2'],
+        'Returned' => ['color' => '#2563EB', 'bg' => '#DBEAFE'],
+        'Overdue' => ['color' => '#DC2626', 'bg' => '#FEE2E2'],
+        'Tersedia' => ['color' => '#16A34A', 'bg' => '#DCFCE7'],
+        'Dipinjam' => ['color' => '#D97706', 'bg' => '#FEF3C7'],
+        'Rusak' => ['color' => '#DC2626', 'bg' => '#FEE2E2'],
+        'Kalibrasi' => ['color' => '#2563EB', 'bg' => '#DBEAFE'],
+        'Tidak Tersedia' => ['color' => '#6B7280', 'bg' => '#E5E7EB'],
+        'Dilaporkan' => ['color' => '#DC2626', 'bg' => '#FEE2E2'],
+        'Ditangani' => ['color' => '#2563EB', 'bg' => '#DBEAFE'],
+        'Selesai' => ['color' => '#16A34A', 'bg' => '#DCFCE7'],
+        'Disetujui' => ['color' => '#16A34A', 'bg' => '#DCFCE7'],
+        'Ditolak' => ['color' => '#DC2626', 'bg' => '#FEE2E2'],
+        'Terjadwal' => ['color' => '#2563EB', 'bg' => '#DBEAFE'],
+        'Sedang Berjalan' => ['color' => '#D97706', 'bg' => '#FEF3C7'],
     ];
-    $color = $map[$status] ?? 'secondary';
-    return "<span class=\"glass-badge badge-{$color}\">{$status}</span>";
+    $c = $map[$status] ?? ['color' => '#6B7280', 'bg' => '#E5E7EB'];
+    return "<span class=\"badge\" style=\"background:{$c['bg']};color:{$c['color']}\">{$status}</span>";
 }
 
 function getCount($table, $condition = '1=1', $params = []) {

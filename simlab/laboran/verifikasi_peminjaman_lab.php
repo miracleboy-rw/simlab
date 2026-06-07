@@ -6,9 +6,7 @@ require_once '../includes/auth_check.php';
 if (!isRole('laboran')) { alert('danger', 'Akses ditolak!'); redirect('../index.php'); }
 $base_url = '../';
 $page_title = 'Verifikasi Peminjaman Lab';
-include '../includes/header.php';
 
-// Proses approve/reject
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = (int)$_POST['id'];
     $action = $_POST['action'];
@@ -37,6 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('verifikasi_peminjaman_lab.php');
 }
 
+include '../includes/header.php';
+
 $filter = $_GET['status'] ?? 'Pending';
 $sql = "SELECT pl.*, u.nama_lengkap, u.nim_nidn, l.nama_lab, l.kode_lab, l.lokasi
         FROM peminjaman_lab pl
@@ -48,32 +48,32 @@ $sql .= " ORDER BY pl.created_at DESC";
 $list = fetchAll($sql, $params);
 ?>
 <div class="mb-6">
-    <h1 class="page-title"><i class="fas fa-door-open text-primary mr-3"></i>Verifikasi Peminjaman Lab</h1>
+    <h1 class="page-title"><span class="material-symbols-outlined text-primary mr-3">meeting_room</span>Verifikasi Peminjaman Lab</h1>
     <p class="page-subtitle">Setujui atau tolak peminjaman laboratorium oleh mahasiswa</p>
 </div>
 
 <div class="flex gap-2 mb-6 flex-wrap">
     <?php foreach (['','Pending','Approved','Rejected','Returned'] as $s): ?>
-    <a href="?status=<?= $s ?>" class="btn-glass <?= $filter===$s ? 'btn-glass-primary' : 'btn-glass-outline' ?> btn-sm"><?= $s ?: 'Semua' ?></a>
+    <a href="?status=<?= $s ?>" class="btn <?= $filter===$s ? 'btn-primary' : 'btn-outline' ?> btn-sm"><?= $s ?: 'Semua' ?></a>
     <?php endforeach; ?>
 </div>
 
-<div class="glass-card p-6">
+<div class="card p-5">
     <?php if (empty($list)): ?>
-    <div class="text-center py-8 text-muted"><i class="fas fa-check-circle text-4xl mb-3 block"></i>Tidak ada data peminjaman lab.</div>
+    <div class="text-center py-8 text-muted"><span class="material-symbols-outlined" style="font-size:2.5rem; display:block; margin-bottom:0.75rem">check_circle</span>Tidak ada data peminjaman lab.</div>
     <?php else: ?>
-    <div class="overflow-x-auto">
-        <table class="glass-table">
+    <div class="table-wrapper">
+        <table class="table">
             <thead><tr>
                 <th>Kode</th><th>Peminjam</th><th>Lab</th><th>Tujuan</th><th>Tanggal</th><th>Jam</th><th>Status</th><th>Aksi</th>
             </tr></thead>
             <tbody>
                 <?php foreach ($list as $pl): ?>
                 <tr class="<?= $pl['status']=='Pending' ? 'bg-amber-50/50' : '' ?>">
-                    <td><span class="glass-badge badge-dark"><?= htmlspecialchars($pl['kode_peminjaman']) ?></span></td>
+                    <td><span class="badge" style="background:#374151; color:#fff"><?= htmlspecialchars($pl['kode_peminjaman']) ?></span></td>
                     <td><?= htmlspecialchars($pl['nama_lengkap']) ?><br><small class="text-muted"><?= htmlspecialchars($pl['nim_nidn']) ?></small></td>
                     <td><?= htmlspecialchars($pl['nama_lab']) ?><br><small class="text-muted"><?= htmlspecialchars($pl['kode_lab']) ?></small></td>
-                    <td><span class="glass-badge badge-info"><?= htmlspecialchars($pl['tujuan_peminjaman']) ?></span></td>
+                    <td><span class="badge" style="background:#E0F2FE; color:#0284C7"><?= htmlspecialchars($pl['tujuan_peminjaman']) ?></span></td>
                     <td><?= formatTanggalIndo($pl['tgl_pinjam']) ?><br><small class="text-muted">s/d <?= formatTanggalIndo($pl['tgl_kembali']) ?></small></td>
                     <td><?= date('H:i', strtotime($pl['jam_mulai'])) ?> - <?= date('H:i', strtotime($pl['jam_selesai'])) ?></td>
                     <td><?= statusBadge($pl['status']) ?></td>
@@ -83,26 +83,26 @@ $list = fetchAll($sql, $params);
                             <form method="POST" onsubmit="return confirm('Setujui peminjaman ini?')">
                                 <input type="hidden" name="id" value="<?= $pl['id'] ?>">
                                 <input type="hidden" name="action" value="approve">
-                                <button class="btn-glass btn-glass-success btn-sm w-full"><i class="fas fa-check mr-1"></i> Approve</button>
+                                <button class="btn btn-success btn-sm btn-md3 w-full"><span class="material-symbols-outlined mr-1">check</span> Approve</button>
                             </form>
                             <form method="POST" onsubmit="return confirm('Tolak peminjaman ini?')">
                                 <input type="hidden" name="id" value="<?= $pl['id'] ?>">
                                 <input type="hidden" name="action" value="reject">
-                                <input type="text" name="alasan_penolakan" class="glass-input !py-1 text-xs mb-1" placeholder="Alasan tolak..." required>
-                                <button class="btn-glass btn-glass-danger btn-sm w-full"><i class="fas fa-times mr-1"></i> Reject</button>
+                                <input type="text" name="alasan_penolakan" class="form-input !py-1 text-xs mb-1" placeholder="Alasan tolak..." required>
+                                <button class="btn btn-danger btn-sm btn-md3 w-full"><span class="material-symbols-outlined mr-1">close</span> Reject</button>
                             </form>
                         </div>
                         <?php elseif ($pl['status'] == 'Approved'): ?>
                         <form method="POST" onsubmit="return confirm('Tandai sudah dikembalikan?')">
                             <input type="hidden" name="id" value="<?= $pl['id'] ?>">
                             <input type="hidden" name="action" value="return">
-                            <button class="btn-glass btn-glass-outline btn-sm"><i class="fas fa-undo-alt mr-1"></i> Kembali</button>
+                            <button class="btn btn-outline btn-sm btn-md3"><span class="material-symbols-outlined mr-1">undo</span> Kembali</button>
                         </form>
                         <?php endif; ?>
                     </td>
                 </tr>
                 <?php if ($pl['status'] == 'Rejected' && $pl['alasan_penolakan']): ?>
-                <tr><td colspan="8" class="!pt-0 !pb-3"><div class="text-xs text-accent ml-2"><i class="fas fa-info-circle mr-1"></i> Alasan: <?= htmlspecialchars($pl['alasan_penolakan']) ?></div></td></tr>
+                <tr><td colspan="8" class="!pt-0 !pb-3"><div class="text-xs text-accent ml-2"><span class="material-symbols-outlined mr-1">info</span> Alasan: <?= htmlspecialchars($pl['alasan_penolakan']) ?></div></td></tr>
                 <?php endif; ?>
                 <?php endforeach; ?>
             </tbody>
