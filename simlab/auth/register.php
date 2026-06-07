@@ -31,9 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $errors = [];
 
-        if ((int)$tahun_kode < 123 || (int)$tahun_kode > $kode_tahun_sekarang) {
-            $tahun_min = 2023;
-            $errors[] = "Kode tahun <strong>$tahun_kode</strong> tidak valid. (Kode tahun $tahun_kode = angkatan $tahun_ajaran, kode tahun $kode_tahun_sekarang = angkatan $tahun_sekarang)";
+        $tahun_min = max(2020, $tahun_sekarang - 7);
+        $kode_tahun_min = $tahun_min - 1900;
+        if ((int)$tahun_kode < $kode_tahun_min || (int)$tahun_kode > $kode_tahun_sekarang) {
+            $errors[] = "Kode tahun <strong>$tahun_kode</strong> tidak valid. (Minimal angkatan $tahun_min, maksimal angkatan $tahun_sekarang)";
         }
         if ($kode_prodi !== '430') {
             $errors[] = "Kode prodi <strong>$kode_prodi</strong> tidak valid. Kode prodi Teknik Biomedis adalah <strong>430</strong>.";
