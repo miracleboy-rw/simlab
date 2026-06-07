@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIFLAB-BM — Daftar Akun</title>
+    <title>SIM-LAB — Daftar Akun</title>
     <link rel="stylesheet" href="../assets/css/style.css?v=2">
 </head>
 <body>
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="auth-brand-icon">
                 <span class="material-symbols-outlined" style="font-size:32px">biotech</span>
             </div>
-            <h1>SIFLAB-BM</h1>
+            <h1>SIM-LAB</h1>
             <p>Platform manajemen laboratorium biomedis terpadu. Daftar sekarang untuk mengakses berbagai layanan peminjaman alat, jadwal laboratorium, dan sumber daya akademik.</p>
             <div style="margin-top:32px;background:rgba(255,255,255,0.1);border-radius:12px;padding:20px">
                 <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Sudah punya akun? <a href="login.php" style="color:#2a4dd7;font-weight:600">Masuk sekarang</a>
             </p>
             <?php endif; ?>
-            <p style="text-align:center;margin-top:8px;font-size:11px;color:#9CA3AF">&copy; 2026 SIFLAB-BM. All rights reserved.</p>
+            <p style="text-align:center;margin-top:8px;font-size:11px;color:#9CA3AF">&copy; 2026 SIM-LAB. All rights reserved.</p>
         </div>
     </div>
 </div>

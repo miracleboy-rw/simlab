@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('log_errors', 1);
-// Setup SIFLAB-BM
+// Setup SIM-LAB
 // Jalankan: http://localhost/simlab/setup.php
 
 $host = 'sql313.infinityfree.com';
@@ -11,14 +11,14 @@ $username = 'if0_42116915';
 $password = 'DWikOywMWjq';
 
 echo "<!DOCTYPE html><html lang='id'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'>";
-echo "<title>Setup SIFLAB-BM</title>";
+echo "<title>Setup SIM-LAB</title>";
 echo "<script src='https://cdn.tailwindcss.com'></script>";
 echo "<script>tailwind.config={theme:{extend:{colors:{primary:'#4318FF',secondary:'#6E38F7',accent:'#FF5B75',navy:'#2B3674',soft:'#F4F7FE'},borderRadius:{'3xl':'24px'}}}}</script>";
 echo "<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'>";
 echo "<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap' rel='stylesheet'>";
 echo "<style>body{font-family:'Inter',sans-serif;background:#F4F7FE;min-height:100vh;padding:2rem}</style></head><body>";
 echo "<div class='max-w-2xl mx-auto'><div style='background:rgba(255,255,255,0.85);backdrop-filter:blur(24px);border-radius:24px;box-shadow:0 20px 60px rgba(153,153,153,0.12);padding:2.5rem;border:1px solid rgba(255,255,255,0.5)'>";
-echo "<div class='flex items-center gap-4 mb-6'><div class='w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center'><span class="material-symbols-outlined" style="color:white;font-size:20px">biotech</span></div><div><h1 class='text-2xl font-extrabold' style='color:#111827'>Setup SIFLAB-BM</h1><p class='text-sm' style='color:#9CA3AF'>Sistem Informasi Manajemen Lab Biomedis</p></div></div>";
+echo "<div class='flex items-center gap-4 mb-6'><div class='w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center'><span class="material-symbols-outlined" style="color:white;font-size:20px">biotech</span></div><div><h1 class='text-2xl font-extrabold' style='color:#111827'>Setup SIM-LAB</h1><p class='text-sm' style='color:#9CA3AF'>Sistem Informasi Manajemen Lab Biomedis</p></div></div>";
 
 try {
     $pdo = new PDO("mysql:host=$host;charset=utf8mb4", $username, $password);

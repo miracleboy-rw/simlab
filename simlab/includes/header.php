@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIFLAB-BM — <?= $page_title ?? 'Dashboard' ?></title>
+    <title>SIM-LAB — <?= $page_title ?? 'Dashboard' ?></title>
     <link rel="stylesheet" href="<?= $base_url ?? '../' ?>assets/css/style.css?v=5">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css">
 </head>
@@ -27,7 +27,7 @@ $role = $_SESSION['role'];
                 <span class="material-symbols-outlined">biotech</span>
             </div>
             <div>
-                <div class="sidebar-brand-text">SIFLAB-BM</div>
+                <div class="sidebar-brand-text">SIM-LAB</div>
                 <div class="sidebar-brand-sub">SIM Lab Biomedis</div>
             </div>
         </div>
